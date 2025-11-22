@@ -36,7 +36,7 @@ function doGet(e) {
  */
 function doPost(e) {
   Logger.log("doPost action: " + e.parameter.action);
-  var ss = SpreadsheetApp.openById("1eeAjZ02CldS5XHW88X_EWy4GvvrOXwMBA_LDM39R58o");
+  var ss = SpreadsheetApp.openById("1eabKd-YqMH48rX5BdhFd_MU6KWFdWHAWt2t5-Y96reA");
   var action = e.parameter.action;
 
   switch (action) {
