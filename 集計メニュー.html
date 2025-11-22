@@ -1,0 +1,65 @@
+<!-- 集計メニュー.html -->
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #f4f4f4;
+        padding: 20px;
+        color: #333;
+      }
+      .container {
+        max-width: 600px;
+        margin: 0 auto;
+        background: #fff;
+        padding: 30px;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        text-align: center;
+      }
+      h2 {
+        color: #4CAF50;
+        margin-bottom: 30px;
+      }
+      .menu-item {
+        margin: 20px 0;
+      }
+      .menu-button {
+        padding: 15px 30px;
+        background-color: #4CAF50;
+        border: none;
+        color: #fff;
+        border-radius: 4px;
+        font-size: 1.2em;
+        cursor: pointer;
+        transition: background 0.3s;
+      }
+      .menu-button:hover {
+        background-color: #45a049;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h2>時間外集計メニュー</h2>
+      <div class="menu-item">
+        <form action="<?= ScriptApp.getService().getUrl() ?>" method="post">
+          <input type="hidden" name="action" value="所属別集計" />
+          <input type="hidden" name="ログインID" value="<?= ログインID ?>" />
+          <input class="menu-button" type="submit" value="所属別集計" />
+        </form>
+      </div>
+      <div class="menu-item">
+        <form action="<?= ScriptApp.getService().getUrl() ?>" method="post">
+          <input type="hidden" name="action" value="年月別集計" />
+          <input type="hidden" name="ログインID" value="<?= ログインID ?>" />
+          <input class="menu-button" type="submit" value="年月別集計" />
+        </form>
+      </div>
+    </div>
+  </body>
+</html>
+
+

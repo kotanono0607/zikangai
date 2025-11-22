@@ -1,0 +1,90 @@
+﻿[
+    {
+        "Name":  "Aggregation.js",
+        "Relative":  "Aggregation.js",
+        "LengthBytes":  3362,
+        "SHA256":  "78D05CE41DDD16CF7BBFF1B5B625CD7392A0768BA1DCAE27A3088DABA29F948A",
+        "LineCount":  100,
+        "FirstLine":  "//Aggregation.gs"
+    },
+    {
+        "Name":  "appsscript.json",
+        "Relative":  "appsscript.json",
+        "LengthBytes":  202,
+        "SHA256":  "740E10D37ECCE8C06867001CAADF8F964E18988A4B574C967887A142791DC638",
+        "LineCount":  10,
+        "FirstLine":  "{"
+    },
+    {
+        "Name":  "input.html",
+        "Relative":  "input.html",
+        "LengthBytes":  6897,
+        "SHA256":  "D56E757A411066A7D0B3097BD06DA5E9EEB81A6DE88DBA7BE1BBD7AA5847A981",
+        "LineCount":  213,
+        "FirstLine":  "\u003c!-- input.html 修正版 Ver4.1.1 --\u003e"
+    },
+    {
+        "Name":  "login.html",
+        "Relative":  "login.html",
+        "LengthBytes":  2939,
+        "SHA256":  "6B4998D34CF812FEA0E1D18F69E07A2F501BCA5D7625BD4BAD1B684E042B280B",
+        "LineCount":  93,
+        "FirstLine":  "\u003c!-- タイトル: login.html Ver1.2 --\u003e"
+    },
+    {
+        "Name":  "Routing.js",
+        "Relative":  "Routing.js",
+        "LengthBytes":  3662,
+        "SHA256":  "4C568BD73F46AAC6DC8D07DA535DBCDA838B3E48CC4392F2367D870DD202C108",
+        "LineCount":  112,
+        "FirstLine":  "/**"
+    },
+    {
+        "Name":  "select.html",
+        "Relative":  "select.html",
+        "LengthBytes":  5020,
+        "SHA256":  "E6A0264FDE7FF9DBC9427543C80CAED825320672D2F91582CBA93F311FB4C666",
+        "LineCount":  161,
+        "FirstLine":  "\u003c!-- select.html モダンUI版 Ver4.1.2 : 小数点を常に xx.xx 表示 + メニューボタン改修 --\u003e"
+    },
+    {
+        "Name":  "TimeReport.js",
+        "Relative":  "TimeReport.js",
+        "LengthBytes":  3925,
+        "SHA256":  "0ECC8C04C24EDAC241519118DC75CE5DECEB0F9DC0BB3C318B534529A8BEF276",
+        "LineCount":  92,
+        "FirstLine":  "//================================================================================================================================================="
+    },
+    {
+        "Name":  "メニュー.html",
+        "Relative":  "メニュー.html",
+        "LengthBytes":  1880,
+        "SHA256":  "CD4EB27ED8764804B8D49A6E292755B3752A06F2DA9F5B6A032EDD52A24D9A2B",
+        "LineCount":  66,
+        "FirstLine":  "\u003c!-- メニュー.html --\u003e"
+    },
+    {
+        "Name":  "集計メニュー.html",
+        "Relative":  "集計メニュー.html",
+        "LengthBytes":  1793,
+        "SHA256":  "406698CCA45943D0D674EE8665CCF1BE6093146AF2002576C3FA2C6DCDB7B2CE",
+        "LineCount":  65,
+        "FirstLine":  "\u003c!-- 集計メニュー.html --\u003e"
+    },
+    {
+        "Name":  "所属別集計結果.html",
+        "Relative":  "所属別集計結果.html",
+        "LengthBytes":  1316,
+        "SHA256":  "2D9FEDC3C101619D5DA0D945CA03BC7DF8F9D215458C2C3D4114735B9D493A94",
+        "LineCount":  45,
+        "FirstLine":  "\u003c!-- 所属別集計結果.html --\u003e"
+    },
+    {
+        "Name":  "年月別集計結果.html",
+        "Relative":  "年月別集計結果.html",
+        "LengthBytes":  551,
+        "SHA256":  "665544588ABD9E1EF510F084B234506B629C8D52AE255692783CF563D05D09E1",
+        "LineCount":  23,
+        "FirstLine":  "\u003c!-- 年月別集計結果.html --\u003e"
+    }
+]

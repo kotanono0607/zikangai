@@ -1,0 +1,23 @@
+<!-- 年月別集計結果.html -->
+<!DOCTYPE html>
+<html>
+<head>
+  <base target="_top">
+  <style>
+    body { font-family: Arial, sans-serif; padding:20px; }
+    h2 { color: #4CAF50; }
+    ul { list-style:none; padding-left:0; }
+    li { margin-bottom: 5px; }
+  </style>
+</head>
+<body>
+  <h2>年月別集計結果</h2>
+  <ul>
+    <? for(var ym in aggregationByYm) { ?>
+      <li>
+        <?= ym ?> - 時間外: <?= aggregationByYm[ym].時間外 ?>, 振替時間: <?= aggregationByYm[ym].振替時間 ?>
+      </li>
+    <? } ?>
+  </ul>
+</body>
+</html>

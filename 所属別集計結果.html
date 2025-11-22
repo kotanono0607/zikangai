@@ -1,0 +1,45 @@
+<!-- 所属別集計結果.html -->
+<!DOCTYPE html>
+<html>
+<head>
+  <base target="_top">
+  <style>
+    body { font-family: Arial, sans-serif; padding:20px; }
+    h2 { color: #4CAF50; }
+    details { margin-bottom: 1em; }
+    summary { font-size: 1.2em; font-weight: bold; cursor: pointer; }
+    h4 { margin-left: 1em; }
+    ul { list-style: none; padding-left: 2em; }
+    li { margin-bottom: 0.5em; }
+  </style>
+</head>
+<body>
+  <h2>所属別集計結果</h2>
+  
+  <? 
+    var safeHierarchical = (typeof hierarchical !== 'undefined' && hierarchical) ? hierarchical : {};
+  ?>
+  
+  <? if(Object.keys(safeHierarchical).length > 0) { ?>
+    <? for(var course in safeHierarchical) { ?>
+      <details>
+        <summary><?= course ?></summary>
+        <? for(var section in safeHierarchical[course]) { ?>
+          <h4><?= section ?></h4>
+          <ul>
+          <? for(var month in safeHierarchical[course][section]) { ?>
+            <li>
+              <?= month ?> - 時間外: <?= safeHierarchical[course][section][month].時間外 ?>, 
+              振替時間: <?= safeHierarchical[course][section][month].振替時間 ?>
+            </li>
+          <? } ?>
+          </ul>
+        <? } ?>
+      </details>
+    <? } ?>
+  <? } else { ?>
+    <p>集計データがありません。</p>
+  <? } ?>
+  
+</body>
+</html>

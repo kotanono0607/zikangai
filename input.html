@@ -1,0 +1,213 @@
+<!-- input.html 修正版 Ver4.1.1 -->
+<!DOCTYPE html>
+<html>
+<head>
+  <base target="_top">
+  <meta charset="UTF-8">
+  <title>入力画面</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
+      margin: 0;
+      padding: 20px;
+    }
+    .container {
+      max-width: 500px;
+      margin: 0 auto;
+      background: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    h2 {
+      text-align: center;
+      color: #4CAF50;
+      margin-bottom: 20px;
+    }
+    p {
+      margin: 10px 0;
+      font-size: 1rem;
+      text-align: center;
+    }
+    label {
+      display: block;
+      margin-top: 15px;
+      font-weight: bold;
+    }
+    .row {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+    }
+    select {
+      flex: 1;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-size: 1rem;
+    }
+    input[type="submit"], input[type="button"] {
+      width: 100%;
+      padding: 12px;
+      background-color: #4CAF50;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      font-size: 1.1rem;
+      cursor: pointer;
+      transition: background 0.3s;
+      margin-top: 15px;
+    }
+    input[type="button"] {
+      background-color: #888;
+    }
+    input[type="submit"]:hover { background-color: #45a049; }
+    input[type="button"]:hover { background-color: #666; }
+    #serviceTime {
+      font-weight: bold;
+      font-size: 1.3em;
+      color: #000;
+      margin-top: 10px;
+      text-align: center;
+    }
+  </style>
+  <script>
+    /**
+     * 数値を整数部と小数部に分割して返す
+     * @param {string|number} num 
+     * @returns {{整数:number, 小数:string}}
+     */
+    function 分割する(num){
+      var v = parseFloat(num) || 0;
+      var 整数 = Math.floor(v);
+      var 小数 = (v - 整数).toFixed(2);
+      return { 整数: 整数, 小数: 小数 };
+    }
+
+    /**
+     * セレクト要素へオプションを動的生成
+     * @param {HTMLSelectElement} select 
+     * @param {number} min 
+     * @param {number} max 
+     * @param {number} step 
+     */
+    function オプション生成(select, min, max, step){
+      for(let i = min; i <= max; i += step){
+        const opt = document.createElement('option');
+        opt.value = i.toFixed(2);
+        opt.textContent = (step === 1)
+          ? String(i)
+          : i.toFixed(2).replace('0','');
+        select.appendChild(opt);
+      }
+    }
+
+    /**
+     * 2つの select から数値を合算し targetHidden へ格納して返す
+     * @param {string} intId 
+     * @param {string} decId 
+     * @param {string} hiddenId 
+     * @returns {number}
+     */
+    function 計算値(intId, decId, hiddenId){
+      const iv = parseInt(document.getElementById(intId).value, 10);
+      const dv = parseFloat(document.getElementById(decId).value);
+      const 合計 = iv + dv;
+      document.getElementById(hiddenId).value = 合計.toFixed(2);
+      return 合計;
+    }
+
+    /**
+     * 合計を計算して表示＆hidden に格納
+     */
+    function 更新する(){
+      let ot = 計算値('ot_int','ot_dec','時間外_hidden');
+      let cm = 計算値('cm_int','cm_dec','振替時間_hidden');
+      // 上限200時間でクランプ
+      if(ot > 200){ ot = 200; document.getElementById('ot_int').value='200'; document.getElementById('ot_dec').value='00'; }
+      if(cm > 200){ cm = 200; document.getElementById('cm_int').value='200'; document.getElementById('cm_dec').value='00'; }
+      let service = ot - cm;
+      if(service > 200) service = 200;
+      if(service < 0) service = 0;
+      document.getElementById('serviceTime').textContent = service.toFixed(2);
+    }
+
+    /**
+     * 戻るボタン：隠しフォームを submit して select 画面へ遷移
+     */
+    function 戻る(){
+      document.getElementById('戻るフォーム').submit();
+    }
+
+    // ページロード時に実行
+    window.addEventListener('DOMContentLoaded', () => {
+      const otInt = document.getElementById('ot_int');
+      const otDec = document.getElementById('ot_dec');
+      const cmInt = document.getElementById('cm_int');
+      const cmDec = document.getElementById('cm_dec');
+
+      オプション生成(otInt, 0, 200, 1);
+      オプション生成(cmInt, 0, 200, 1);
+      オプション生成(otDec, 0, 0.75, 0.25);
+      オプション生成(cmDec, 0, 0.75, 0.25);
+
+      const prevOT = parseFloat('<?= typeof 前回時間外 !== "undefined" && 前回時間外 !== "" ? 前回時間外 : 0 ?>');
+      const prevCM = parseFloat('<?= typeof 前回振替時間 !== "undefined" && 前回振替時間 !== "" ? 前回振替時間 : 0 ?>');
+
+      const sp1 = 分割する(prevOT);
+      otInt.value = sp1.整数.toFixed(2);
+      otDec.value = parseFloat(sp1.小数).toFixed(2);
+
+      const sp2 = 分割する(prevCM);
+      cmInt.value = sp2.整数.toFixed(2);
+      cmDec.value = parseFloat(sp2.小数).toFixed(2);
+
+      更新する();
+      [otInt, otDec, cmInt, cmDec].forEach(el => el.addEventListener('change', 更新する));
+    });
+  </script>
+</head>
+<body>
+  <div class="container">
+    <h2>入力画面</h2>
+    <p>上限200時間（時間外・業務命令・サービス時間すべて）</p>
+    <p>ログインID: <?= ログインID ?></p>
+    <? if (typeof 選択年月 !== 'undefined') { ?>
+      <p>選択年月: <?= 選択年月 ?></p>
+    <? } ?>
+
+    <form action="<?= ScriptApp.getService().getUrl() ?>" method="post">
+      <input type="hidden" name="action" value="sendText" />
+      <input type="hidden" name="入力ID" value="<?= ログインID ?>" />
+      <input type="hidden" name="年月" value="<?= 選択年月 ?>" />
+
+      <label>時間外:</label>
+      <div class="row">
+        <select id="ot_int" aria-label="時間外 整数部"></select>
+        <select id="ot_dec" aria-label="時間外 小数部"></select>
+      </div>
+      <input type="hidden" name="時間外" id="時間外_hidden" />
+
+      <label>業務命令:</label>
+      <div class="row">
+        <select id="cm_int" aria-label="業務命令 整数部"></select>
+        <select id="cm_dec" aria-label="業務命令 小数部"></select>
+      </div>
+      <input type="hidden" name="振替時間" id="振替時間_hidden" />
+
+      <label>サービス時間:</label>
+      <p id="serviceTime">0.00</p>
+
+      <input type="submit" value="送信" />
+      <input type="button" value="戻る" onclick="戻る()" />
+    </form>
+
+    <!-- 戻る用フォーム：時間外報告（select画面）へPOST -->
+    <form id="戻るフォーム" action="<?= ScriptApp.getService().getUrl() ?>" method="post" style="display:none;">
+      <input type="hidden" name="action" value="時間外報告" />
+      <input type="hidden" name="ログインID" value="<?= ログインID ?>" />
+    </form>
+  </div>
+</body>
+</html>

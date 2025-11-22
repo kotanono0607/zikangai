@@ -1,0 +1,161 @@
+<!-- select.html モダンUI版 Ver4.1.2 : 小数点を常に xx.xx 表示 + メニューボタン改修 -->
+<!DOCTYPE html>
+<html>
+<head>
+  <base target="_top">
+  <!-- Google Fonts 読み込み -->
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    /* 全体設定 */
+    body {
+      font-family: 'Roboto', sans-serif;
+      background: linear-gradient(135deg, #e0e0e0, #ffffff);
+      margin: 0;
+      padding: 20px;
+      color: #333;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+    /* コンテナ */
+    .container {
+      width: 100%;
+      max-width: 600px;
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+      padding: 30px;
+    }
+    h2 {
+      text-align: center;
+      color: #4CAF50;
+      margin-bottom: 20px;
+    }
+    ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    li.list-item {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      padding: 15px;
+      margin-bottom: 15px;
+      background: #f9f9f9;
+      border-radius: 8px;
+      transition: background 0.3s;
+    }
+    li.list-item:hover { background: #f1f1f1; }
+    .year-form { margin: 0; }
+    .year-button {
+      padding: 10px 20px;
+      background-color: #4CAF50;
+      border: none;
+      color: #fff;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background 0.3s;
+      font-size: 1rem;
+      font-weight: 500;
+    }
+    .year-button:hover { background-color: #45a049; }
+    .data-display {
+      display: flex;
+      flex: 1;
+      justify-content: flex-end;
+      gap: 20px;
+      align-items: center;
+    }
+    .data-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 5px 10px;
+      background: #eef9f1;
+      border-radius: 6px;
+      min-width: 80px;
+    }
+    .data-label {
+      font-size: 0.8rem;
+      color: #555;
+    }
+    .data-value {
+      font-size: 1rem;
+      font-weight: 500;
+      color: #333;
+    }
+    .not-entered {
+      color: #888;
+      font-style: italic;
+      text-align: center;
+    }
+    .btn-back {
+      display: block;
+      width: 100%;
+      padding: 12px;
+      margin-top: 20px;
+      background-color: #888;
+      color: #fff;
+      text-align: center;
+      border-radius: 6px;
+      text-decoration: none;
+      font-size: 1rem;
+      transition: background 0.3s;
+    }
+    .btn-back:hover { background-color: #666; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>西暦＋月数を選択してください</h2>
+    <ul>
+      <? for (var i = 0; i < options.length; i++) { ?>
+      <? /* --- 小数点以下 2 桁で常時表示するため toFixed(2) で整形 --- */
+         var Bnum = (options[i].B !== '' && options[i].B != null) ? Number(options[i].B) : null;
+         var Cnum = (options[i].C !== '' && options[i].C != null) ? Number(options[i].C) : null;
+         var Bfmt = (Bnum !== null) ? Bnum.toFixed(2) : "";
+         var Cfmt = (Cnum !== null) ? Cnum.toFixed(2) : "";
+         var serviceTime = (Bnum || 0) - (Cnum || 0);
+      ?>
+      <li class="list-item">
+        <form class="year-form" action="<?= ScriptApp.getService().getUrl() ?>" method="post">
+          <input type="hidden" name="action" value="select" />
+          <input type="hidden" name="ログインID" value="<?= ログインID ?>" />
+          <input type="hidden" name="年月" value="<?= options[i].年月 ?>" />
+          <input type="hidden" name="時間外" value="<?= options[i].B ?>" />
+          <input type="hidden" name="振替時間" value="<?= options[i].C ?>" />
+          <button type="submit" class="year-button"><?= options[i].年月 ?></button>
+        </form>
+        <div class="data-display">
+          <? if (Bfmt === "" && Cfmt === "") { ?>
+            <span class="not-entered">未入力</span>
+          <? } else { ?>
+            <div class="data-item">
+              <span class="data-label">時間外</span>
+              <span class="data-value"><?= Bfmt !== "" ? Bfmt : "未入力" ?></span>
+            </div>
+            <div class="data-item">
+              <span class="data-label">業務命令</span>
+              <span class="data-value"><?= Cfmt !== "" ? Cfmt : "未入力" ?></span>
+            </div>
+            <div class="data-item">
+              <span class="data-label">サービス時間</span>
+              <span class="data-value"><strong><?= serviceTime.toFixed(2) ?></strong></span>
+            </div>
+          <? } ?>
+        </div>
+      </li>
+      <? } ?>
+    </ul>
+
+    <!-- メニューへ戻るボタン -->
+    <form method="get" action="<?= ScriptApp.getService().getUrl() ?>">
+      <input type="hidden" name="page" value="menu" />
+      <input type="hidden" name="ログインID" value="<?= ログインID ?>" />
+      <button type="submit" class="btn-back">メニューに戻る</button>
+    </form>
+  </div>
+</body>
+</html>
