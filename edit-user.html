@@ -191,6 +191,11 @@
         <button type="submit" class="btn btn-primary">
           <?= isNew ? '✅ 登録する' : '💾 保存する' ?>
         </button>
+        <? if (!isNew) { ?>
+          <button type="button" class="btn btn-primary" onclick="generateUserQr()" style="background-color:#9C27B0;">
+            📱 QRカード生成
+          </button>
+        <? } ?>
         <button type="button" class="btn btn-secondary" onclick="goBack()">
           ❌ キャンセル
         </button>
@@ -284,6 +289,48 @@
         document.body.appendChild(form);
         form.submit();
       }
+    }
+
+    // QRカード生成（個別）
+    function generateUserQr() {
+      var userId = document.getElementById('userId').value;
+      var userName = document.getElementById('userName').value;
+
+      if (!userId) {
+        alert('ユーザーIDが取得できません');
+        return;
+      }
+
+      if (!confirm(userName + ' さんのQRカードを生成しますか？\n\n※ブラウザで新しいウィンドウが開きます')) {
+        return;
+      }
+
+      var form = document.createElement('form');
+      form.method = 'post';
+      form.action = '<?= ScriptApp.getService().getUrl() ?>';
+      form.target = '_blank'; // 新しいウィンドウで開く
+
+      var actionInput = document.createElement('input');
+      actionInput.type = 'hidden';
+      actionInput.name = 'action';
+      actionInput.value = 'generateUserQr';
+      form.appendChild(actionInput);
+
+      var loginIdInput = document.createElement('input');
+      loginIdInput.type = 'hidden';
+      loginIdInput.name = 'ログインID';
+      loginIdInput.value = '<?= ログインID ?>';
+      form.appendChild(loginIdInput);
+
+      var targetUserIdInput = document.createElement('input');
+      targetUserIdInput.type = 'hidden';
+      targetUserIdInput.name = 'targetUserId';
+      targetUserIdInput.value = userId;
+      form.appendChild(targetUserIdInput);
+
+      document.body.appendChild(form);
+      form.submit();
+      document.body.removeChild(form);
     }
   </script>
 </body>

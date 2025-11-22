@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <base target="_top">
+  <meta charset="UTF-8">
+  <title>QRログインカード</title>
+  <style>
+    /* A4印刷用スタイル */
+    @page {
+      size: A4;
+      margin: 0;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', Meiryo, sans-serif;
+      background: #f5f5f5;
+    }
+
+    /* 1ページ = 1ユーザーのカード */
+    .qr-card {
+      width: 210mm;
+      height: 297mm; /* A4 */
+      background: white;
+      padding: 30mm;
+      page-break-after: always;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+    }
+
+    .qr-card:last-child {
+      page-break-after: auto;
+    }
+
+    /* ヘッダー */
+    .card-header {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    .card-title {
+      font-size: 28px;
+      font-weight: bold;
+      color: #4CAF50;
+      margin-bottom: 8px;
+    }
+
+    .card-subtitle {
+      font-size: 18px;
+      color: #666;
+    }
+
+    /* QRコードエリア */
+    .qr-code-area {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    .qr-code-area img {
+      width: 200mm;
+      height: 200mm;
+      border: 3px solid #4CAF50;
+      border-radius: 12px;
+      padding: 10mm;
+      background: white;
+    }
+
+    /* ユーザー情報エリア */
+    .user-info {
+      width: 100%;
+      max-width: 160mm;
+      background: #f9f9f9;
+      border: 2px solid #e0e0e0;
+      border-radius: 8px;
+      padding: 20px;
+      margin-bottom: 30px;
+    }
+
+    .user-info-row {
+      display: flex;
+      padding: 12px 0;
+      border-bottom: 1px solid #e0e0e0;
+      font-size: 16px;
+    }
+
+    .user-info-row:last-child {
+      border-bottom: none;
+    }
+
+    .user-info-label {
+      font-weight: bold;
+      color: #555;
+      min-width: 80px;
+      flex-shrink: 0;
+    }
+
+    .user-info-value {
+      color: #333;
+      font-size: 18px;
+      font-weight: 500;
+    }
+
+    /* 使い方セクション */
+    .instructions {
+      width: 100%;
+      max-width: 160mm;
+      background: #e8f5e9;
+      border: 2px solid #4CAF50;
+      border-radius: 8px;
+      padding: 20px;
+    }
+
+    .instructions-title {
+      font-size: 18px;
+      font-weight: bold;
+      color: #2e7d32;
+      margin-bottom: 15px;
+      display: flex;
+      align-items: center;
+    }
+
+    .instructions-title::before {
+      content: '📱';
+      margin-right: 8px;
+      font-size: 24px;
+    }
+
+    .instructions ol {
+      margin-left: 25px;
+      font-size: 15px;
+      line-height: 1.8;
+      color: #333;
+    }
+
+    .instructions ol li {
+      margin-bottom: 8px;
+    }
+
+    .notice {
+      margin-top: 20px;
+      padding: 12px;
+      background: #fff3cd;
+      border: 1px solid #ffc107;
+      border-radius: 4px;
+      font-size: 14px;
+      color: #856404;
+    }
+
+    /* 印刷用スタイル */
+    @media print {
+      body {
+        background: white;
+      }
+
+      .qr-card {
+        padding: 25mm;
+      }
+
+      .no-print {
+        display: none !important;
+      }
+    }
+
+    /* 印刷ボタン（画面表示時のみ） */
+    .print-button-area {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 1000;
+    }
+
+    .print-button {
+      padding: 15px 30px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+      transition: all 0.3s;
+    }
+
+    .print-button:hover {
+      background-color: #45a049;
+      box-shadow: 0 6px 8px rgba(0,0,0,0.3);
+    }
+  </style>
+</head>
+<body>
+  <!-- 印刷ボタン（画面表示時のみ） -->
+  <div class="print-button-area no-print">
+    <button class="print-button" onclick="window.print()">
+      🖨️ 印刷 / PDF保存
+    </button>
+  </div>
+
+  <!-- QRカード（ユーザーごとに1ページ） -->
+  <? for (var i = 0; i < users.length; i++) { ?>
+    <? var user = users[i]; ?>
+    <div class="qr-card">
+      <!-- ヘッダー -->
+      <div class="card-header">
+        <div class="card-title">📅 時間外報告システム</div>
+        <div class="card-subtitle">QRログインカード</div>
+      </div>
+
+      <!-- QRコード -->
+      <div class="qr-code-area">
+        <img src="<?!= getQrCodeImageUrl(user.ログインID, 300) ?>"
+             alt="QRコード - <?= user.ログインID ?>">
+      </div>
+
+      <!-- ユーザー情報 -->
+      <div class="user-info">
+        <div class="user-info-row">
+          <span class="user-info-label">👤 氏名:</span>
+          <span class="user-info-value"><?= user.氏名 ?></span>
+        </div>
+        <div class="user-info-row">
+          <span class="user-info-label">🏢 所属:</span>
+          <span class="user-info-value"><?= user.所属１ ?> <? if (user.所属２) { ?>/ <?= user.所属２ ?><? } ?></span>
+        </div>
+        <div class="user-info-row">
+          <span class="user-info-label">🆔 ID:</span>
+          <span class="user-info-value"><?= user.ログインID ?></span>
+        </div>
+      </div>
+
+      <!-- 使い方 -->
+      <div class="instructions">
+        <div class="instructions-title">使い方</div>
+        <ol>
+          <li>スマートフォンのカメラでQRコードを読み取ります</li>
+          <li>表示されたリンクをタップして開きます</li>
+          <li>自動的にログインされ、メニュー画面が表示されます</li>
+          <li>時間外報告を入力してください</li>
+        </ol>
+
+        <div class="notice">
+          <strong>⚠️ 注意:</strong> このカードは大切に保管してください。紛失した場合は管理者に再発行を依頼してください。
+        </div>
+      </div>
+    </div>
+  <? } ?>
+
+  <script>
+    // ページ読み込み完了時のメッセージ
+    window.addEventListener('DOMContentLoaded', function() {
+      console.log('QRカード生成完了: <?= users.length ?>枚');
+
+      <? if (isBulk) { ?>
+        console.log('一括生成モード: ブラウザの印刷機能でPDF保存してください');
+      <? } else { ?>
+        console.log('個別生成モード: 1枚のカードが表示されています');
+      <? } ?>
+    });
+  </script>
+</body>
+</html>

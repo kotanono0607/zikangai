@@ -10,7 +10,15 @@
  */
 function doGet(e) {
   var page = e.parameter.page;
-  Logger.log("doGet called, page: " + page);
+  var action = e.parameter.action;
+  var ss = SpreadsheetApp.openById("1eabKd-YqMH48rX5BdhFd_MU6KWFdWHAWt2t5-Y96reA");
+
+  Logger.log("doGet called, page: " + page + ", action: " + action);
+
+  // QRログイン処理（GETリクエスト）
+  if (action === 'qrLogin') {
+    return handleQrLogin(e, ss);
+  }
 
   if (page === 'input') {
     var inputTmpl = HtmlService.createTemplateFromFile('input');
@@ -136,6 +144,13 @@ function doPost(e) {
 
     case "csvImport":
       return handleCsvImport(e, ss);
+
+    // QRコード生成（管理者専用）
+    case "generateQrPdf":
+      return handleGenerateQrPdf(e, ss);
+
+    case "generateUserQr":
+      return handleGenerateUserQr(e, ss);
 
     // それ以外はログイン画面へ
     default:

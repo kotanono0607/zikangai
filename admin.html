@@ -203,6 +203,7 @@
 
         <button type="button" class="btn btn-primary" onclick="exportCsv()">📥 CSVエクスポート</button>
         <button type="button" class="btn btn-primary" onclick="showImportDialog()">📤 CSVインポート</button>
+        <button type="button" class="btn btn-primary" onclick="generateQrPdf()" style="background-color:#9C27B0;">📱 QRカード一括生成</button>
       </div>
 
       <form method="get" action="<?= ScriptApp.getService().getUrl() ?>" style="display:inline;">
@@ -422,6 +423,34 @@
       };
 
       reader.readAsText(file, 'UTF-8');
+    }
+
+    // QRカード一括生成
+    function generateQrPdf() {
+      if (!confirm('全ての在職ユーザーのQRカードを生成しますか？\n\n※ブラウザで新しいウィンドウが開きます')) {
+        return;
+      }
+
+      var form = document.createElement('form');
+      form.method = 'post';
+      form.action = '<?= ScriptApp.getService().getUrl() ?>';
+      form.target = '_blank'; // 新しいウィンドウで開く
+
+      var actionInput = document.createElement('input');
+      actionInput.type = 'hidden';
+      actionInput.name = 'action';
+      actionInput.value = 'generateQrPdf';
+      form.appendChild(actionInput);
+
+      var idInput = document.createElement('input');
+      idInput.type = 'hidden';
+      idInput.name = 'ログインID';
+      idInput.value = ログインID;
+      form.appendChild(idInput);
+
+      document.body.appendChild(form);
+      form.submit();
+      document.body.removeChild(form);
     }
   </script>
 </body>
