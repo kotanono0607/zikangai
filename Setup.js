@@ -33,15 +33,13 @@ function 初期セットアップ_管理者作成() {
     "総務課",       // 所属１
     "庶務",         // 所属２
     "在職",         // 状態
-    "管理者",       // 権限
-    "admin123"      // パスワード
+    "管理者"        // 権限
   ]);
 
   Logger.log("✅ 管理者ユーザーを作成しました");
   Logger.log("ログインID: admin");
-  Logger.log("パスワード: admin123");
   Logger.log("");
-  Logger.log("⚠️ セキュリティのため、初回ログイン後にパスワードを変更してください");
+  Logger.log("⚠️ 注意: パスワード認証は実装されていません（将来的にQRログインなどに変更予定）");
 }
 
 /**
@@ -56,8 +54,8 @@ function シート構造チェック() {
     return;
   }
 
-  var headers = sheet.getRange(1, 1, 1, 7).getValues()[0];
-  var expectedHeaders = ["ログインID", "氏名", "所属１", "所属２", "状態", "権限", "パスワード"];
+  var headers = sheet.getRange(1, 1, 1, 6).getValues()[0];
+  var expectedHeaders = ["ログインID", "氏名", "所属１", "所属２", "状態", "権限"];
 
   Logger.log("現在のヘッダー:");
   Logger.log(JSON.stringify(headers));
@@ -87,11 +85,11 @@ function テストユーザー作成() {
   var sheet = ss.getSheetByName("ユーザー名");
 
   var testUsers = [
-    ["user001", "山田太郎", "総務課", "庶務係", "在職", "一般", "pass001"],
-    ["user002", "佐藤花子", "営業課", "第一係", "在職", "一般", "pass002"],
-    ["user003", "鈴木一郎", "経理課", "会計係", "在職", "一般", "pass003"],
-    ["user004", "田中美咲", "人事課", "労務係", "在職", "一般", "pass004"],
-    ["user005", "伊藤健太", "IT課", "システム係", "退職", "一般", "pass005"]
+    ["user001", "山田太郎", "総務課", "庶務係", "在職", "一般"],
+    ["user002", "佐藤花子", "営業課", "第一係", "在職", "一般"],
+    ["user003", "鈴木一郎", "経理課", "会計係", "在職", "一般"],
+    ["user004", "田中美咲", "人事課", "労務係", "在職", "一般"],
+    ["user005", "伊藤健太", "IT課", "システム係", "退職", "一般"]
   ];
 
   for (var i = 0; i < testUsers.length; i++) {
@@ -102,7 +100,7 @@ function テストユーザー作成() {
   Logger.log("");
   Logger.log("作成されたユーザー:");
   for (var i = 0; i < testUsers.length; i++) {
-    Logger.log("ID: " + testUsers[i][0] + " / パスワード: " + testUsers[i][6] + " / 状態: " + testUsers[i][4]);
+    Logger.log("ID: " + testUsers[i][0] + " / 状態: " + testUsers[i][4]);
   }
 }
 

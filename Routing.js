@@ -118,13 +118,12 @@ function doPost(e) {
 function ログイン処理(e, ss) {
   var sheetユーザー名 = ss.getSheetByName("ユーザー名");
 
-  // 全列取得（ID, 氏名, 所属１, 所属２, 状態, 権限, パスワード）
+  // 全列取得（ID, 氏名, 所属１, 所属２, 状態, 権限）
   var dataユーザー = sheetユーザー名
-    .getRange(2, 1, sheetユーザー名.getLastRow() - 1, 7)
+    .getRange(2, 1, sheetユーザー名.getLastRow() - 1, 6)
     .getValues();
 
   var 入力ID = String(e.parameter.user);
-  var 入力パスワード = String(e.parameter.password || "");
 
   Logger.log("ログイン試行: " + 入力ID);
 
@@ -138,8 +137,7 @@ function ログイン処理(e, ss) {
         所属１: String(dataユーザー[i][2]),
         所属２: String(dataユーザー[i][3]),
         状態: String(dataユーザー[i][4]),
-        権限: String(dataユーザー[i][5]),
-        パスワード: String(dataユーザー[i][6])
+        権限: String(dataユーザー[i][5])
       };
       break;
     }
@@ -148,13 +146,7 @@ function ログイン処理(e, ss) {
   // ユーザーが見つからない
   if (!ユーザー情報) {
     Logger.log("ユーザーが見つかりません: " + 入力ID);
-    return HtmlService.createHtmlOutput("ログインIDまたはパスワードが違います");
-  }
-
-  // パスワードチェック
-  if (ユーザー情報.パスワード !== 入力パスワード) {
-    Logger.log("パスワード不一致: " + 入力ID);
-    return HtmlService.createHtmlOutput("ログインIDまたはパスワードが違います");
+    return HtmlService.createHtmlOutput("ログインIDが違います");
   }
 
   // 退職者チェック

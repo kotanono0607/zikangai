@@ -7,6 +7,8 @@
  */
 function isAdmin(ログインID, ss) {
   var sheet = ss.getSheetByName("ユーザー名");
+  if (sheet.getLastRow() < 2) return false;
+
   var data = sheet.getRange(2, 1, sheet.getLastRow() - 1, 6).getValues();
 
   for (var i = 0; i < data.length; i++) {
@@ -41,7 +43,7 @@ function handleUserList(e, ss) {
   }
 
   // 全ユーザーデータ取得
-  var data = sheet.getRange(2, 1, lastRow - 1, 7).getValues();
+  var data = sheet.getRange(2, 1, lastRow - 1, 6).getValues();
 
   // 検索条件取得
   var 検索キーワード = e.parameter.search || "";
@@ -57,8 +59,7 @@ function handleUserList(e, ss) {
       所属１: String(data[i][2]),
       所属２: String(data[i][3]),
       状態: String(data[i][4]),
-      権限: String(data[i][5]),
-      パスワード: String(data[i][6])
+      権限: String(data[i][5])
     };
 
     // 検索キーワードでフィルタ
@@ -119,7 +120,7 @@ function handleEditUser(e, ss) {
   }
 
   var sheet = ss.getSheetByName("ユーザー名");
-  var data = sheet.getRange(2, 1, sheet.getLastRow() - 1, 7).getValues();
+  var data = sheet.getRange(2, 1, sheet.getLastRow() - 1, 6).getValues();
 
   // ユーザー情報を検索
   var ユーザー情報 = null;
@@ -131,8 +132,7 @@ function handleEditUser(e, ss) {
         所属１: String(data[i][2]),
         所属２: String(data[i][3]),
         状態: String(data[i][4]),
-        権限: String(data[i][5]),
-        パスワード: String(data[i][6])
+        権限: String(data[i][5])
       };
       break;
     }
@@ -173,8 +173,7 @@ function handleAddUserForm(e, ss) {
     所属１: "",
     所属２: "",
     状態: "在職",
-    権限: "一般",
-    パスワード: ""
+    権限: "一般"
   };
   tmpl.isNew = true;
   return tmpl.evaluate();
@@ -197,21 +196,20 @@ function handleSaveUser(e, ss) {
   var 所属２ = e.parameter.shozoku2;
   var 状態 = e.parameter.status;
   var 権限 = e.parameter.role;
-  var パスワード = e.parameter.userPassword;
   var isNew = e.parameter.isNew === "true";
 
   // バリデーション
-  if (!対象ID || !氏名 || !パスワード) {
+  if (!対象ID || !氏名) {
     return HtmlService.createHtmlOutput("❌ 必須項目を入力してください");
   }
 
   var sheet = ss.getSheetByName("ユーザー名");
-  var data = sheet.getRange(2, 1, sheet.getLastRow() - 1, 7).getValues();
+  var data = sheet.getRange(2, 1, sheet.getLastRow() - 1, 6).getValues();
 
   if (isNew) {
     // 新規登録
     Logger.log("新規ユーザー登録: " + 対象ID);
-    sheet.appendRow([対象ID, 氏名, 所属１, 所属２, 状態, 権限, パスワード]);
+    sheet.appendRow([対象ID, 氏名, 所属１, 所属２, 状態, 権限]);
   } else {
     // 既存ユーザー更新
     Logger.log("ユーザー情報更新: " + 対象ID);
@@ -223,7 +221,6 @@ function handleSaveUser(e, ss) {
         sheet.getRange(rowIndex, 4).setValue(所属２);
         sheet.getRange(rowIndex, 5).setValue(状態);
         sheet.getRange(rowIndex, 6).setValue(権限);
-        sheet.getRange(rowIndex, 7).setValue(パスワード);
         break;
       }
     }
@@ -251,7 +248,7 @@ function handleRetireUser(e, ss) {
   }
 
   var sheet = ss.getSheetByName("ユーザー名");
-  var data = sheet.getRange(2, 1, sheet.getLastRow() - 1, 7).getValues();
+  var data = sheet.getRange(2, 1, sheet.getLastRow() - 1, 6).getValues();
 
   for (var i = 0; i < data.length; i++) {
     if (String(data[i][0]) === 対象ID) {

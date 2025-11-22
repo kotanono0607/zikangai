@@ -9,7 +9,7 @@ function handleProfileEdit(e, ss) {
   var ログインID = e.parameter.ログインID;
 
   var sheet = ss.getSheetByName("ユーザー名");
-  var data = sheet.getRange(2, 1, sheet.getLastRow() - 1, 7).getValues();
+  var data = sheet.getRange(2, 1, sheet.getLastRow() - 1, 6).getValues();
 
   // 自分のユーザー情報を検索
   var ユーザー情報 = null;
@@ -53,15 +53,19 @@ function handleProfileUpdate(e, ss) {
   }
 
   var sheet = ss.getSheetByName("ユーザー名");
-  var data = sheet.getRange(2, 1, sheet.getLastRow() - 1, 7).getValues();
+  var data = sheet.getRange(2, 1, sheet.getLastRow() - 1, 6).getValues();
 
   // 自分の情報を更新
   var updated = false;
+  var 氏名 = "";
+  var 権限 = "";
   for (var i = 0; i < data.length; i++) {
     if (String(data[i][0]) === String(ログインID)) {
       var rowIndex = i + 2;
       sheet.getRange(rowIndex, 3).setValue(所属１);
       sheet.getRange(rowIndex, 4).setValue(所属２);
+      氏名 = data[i][1];
+      権限 = data[i][5];
       updated = true;
       Logger.log("所属情報更新: " + ログインID + " → " + 所属１ + " / " + 所属２);
       break;
@@ -75,8 +79,8 @@ function handleProfileUpdate(e, ss) {
   // 成功メッセージと共にメニューに戻る
   var tmpl = HtmlService.createTemplateFromFile('メニュー');
   tmpl.ログインID = ログインID;
-  tmpl.氏名 = data[i][1]; // 更新したユーザーの氏名
-  tmpl.権限 = data[i][5]; // 権限
+  tmpl.氏名 = 氏名;
+  tmpl.権限 = 権限;
   tmpl.successMessage = "✅ 所属情報を更新しました";
   return tmpl.evaluate();
 }

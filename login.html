@@ -33,7 +33,6 @@
         margin-bottom: 5px;
       }
       .login-container input[type="text"],
-      .login-container input[type="password"],
       .login-container input[type="button"] {
         padding: 10px;
         margin-bottom: 15px;
@@ -60,8 +59,6 @@
         <input type="hidden" name="action" value="login" />
         <label for="user">ログインID:</label>
         <input type="text" id="user" name="user" required />
-        <label for="password">パスワード:</label>
-        <input type="password" id="password" name="password" required />
         <!-- submit ではなく button に変更して独自関数を呼び出す -->
         <input type="button" value="ログイン" onclick="保存して送信()" />
       </form>
@@ -69,15 +66,15 @@
 
     <script>
       // ------------------------------
-      // ページ読み込み時：保存済 ID があれば自動入力（パスワードは保存しない）
+      // ページ読み込み時：保存済 ID があれば自動入力 → 自動ログイン
       // ------------------------------
       document.addEventListener('DOMContentLoaded', () => {
         const 保存済ID = localStorage.getItem('loginId');
         if (保存済ID) {
-          // 入力欄にセット（IDのみ）
+          // 入力欄にセット
           document.getElementById('user').value = 保存済ID;
-          // パスワードにフォーカス
-          document.getElementById('password').focus();
+          // 自動送信でログイン
+          document.getElementById('loginForm').submit();
         }
       });
 
@@ -86,13 +83,9 @@
       // ------------------------------------
       function 保存して送信() {
         const 入力ID = document.getElementById('user').value.trim();
-        const 入力パスワード = document.getElementById('password').value;
-
-        if (入力ID && 入力パスワード) {
-          localStorage.setItem('loginId', 入力ID); // ブラウザに保存（IDのみ）
+        if (入力ID) {
+          localStorage.setItem('loginId', 入力ID); // ブラウザに保存
           document.getElementById('loginForm').submit(); // 通常ログイン
-        } else {
-          alert('ログインIDとパスワードを入力してください');
         }
       }
     </script>
