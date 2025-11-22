@@ -17,9 +17,26 @@ function doGet(e) {
     return inputTmpl.evaluate();
 
   } else if (page === 'menu') {
-    // メニュー画面へ遷移：ログインID をテンプレートに設定
+    // メニュー画面へ遷移：ユーザー情報を取得してテンプレートに設定
+    var ss = SpreadsheetApp.openById("1eabKd-YqMH48rX5BdhFd_MU6KWFdWHAWt2t5-Y96reA");
+    var sheet = ss.getSheetByName("ユーザー名");
+    var ログインID = e.parameter.ログインID;
+
     var menuTmpl = HtmlService.createTemplateFromFile('メニュー');
-    menuTmpl.ログインID = e.parameter.ログインID;
+    menuTmpl.ログインID = ログインID;
+
+    // ユーザー情報を取得
+    if (sheet.getLastRow() >= 2) {
+      var data = sheet.getRange(2, 1, sheet.getLastRow() - 1, 6).getValues();
+      for (var i = 0; i < data.length; i++) {
+        if (String(data[i][0]) === String(ログインID)) {
+          menuTmpl.氏名 = String(data[i][1]);
+          menuTmpl.権限 = String(data[i][5]);
+          break;
+        }
+      }
+    }
+
     return menuTmpl.evaluate();
 
   } else {
