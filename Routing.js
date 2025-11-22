@@ -94,23 +94,58 @@ function doPost(e) {
  */
 function ログイン処理(e, ss) {
   var sheetユーザー名 = ss.getSheetByName("ユーザー名");
+
+  // 全列取得（ID, 氏名, 所属１, 所属２, 状態, 権限, パスワード）
   var dataユーザー = sheetユーザー名
-    .getRange(2, 1, sheetユーザー名.getLastRow() - 1, 1)
+    .getRange(2, 1, sheetユーザー名.getLastRow() - 1, 7)
     .getValues();
-  Logger.log("ユーザー名データ: " + JSON.stringify(dataユーザー));
 
-  // フォーム値とシート値を文字列比較
-  var loginValid = dataユーザー.some(function(row) {
-    return String(row[0]) === String(e.parameter.user);
-  });
-  Logger.log("loginValid: " + loginValid);
+  var 入力ID = String(e.parameter.user);
+  var 入力パスワード = String(e.parameter.password || "");
 
-  if (!loginValid) {
-    return HtmlService.createHtmlOutput("Invalid login");
+  Logger.log("ログイン試行: " + 入力ID);
+
+  // ユーザー情報を検索
+  var ユーザー情報 = null;
+  for (var i = 0; i < dataユーザー.length; i++) {
+    if (String(dataユーザー[i][0]) === 入力ID) {
+      ユーザー情報 = {
+        ログインID: String(dataユーザー[i][0]),
+        氏名: String(dataユーザー[i][1]),
+        所属１: String(dataユーザー[i][2]),
+        所属２: String(dataユーザー[i][3]),
+        状態: String(dataユーザー[i][4]),
+        権限: String(dataユーザー[i][5]),
+        パスワード: String(dataユーザー[i][6])
+      };
+      break;
+    }
   }
 
-  // ログイン成功後はメニュー画面
+  // ユーザーが見つからない
+  if (!ユーザー情報) {
+    Logger.log("ユーザーが見つかりません: " + 入力ID);
+    return HtmlService.createHtmlOutput("ログインIDまたはパスワードが違います");
+  }
+
+  // パスワードチェック
+  if (ユーザー情報.パスワード !== 入力パスワード) {
+    Logger.log("パスワード不一致: " + 入力ID);
+    return HtmlService.createHtmlOutput("ログインIDまたはパスワードが違います");
+  }
+
+  // 退職者チェック
+  if (ユーザー情報.状態 === "退職") {
+    Logger.log("退職者のログイン試行: " + 入力ID);
+    return HtmlService.createHtmlOutput("このアカウントは利用できません（退職済み）");
+  }
+
+  // ログイン成功
+  Logger.log("ログイン成功: " + 入力ID + " (" + ユーザー情報.権限 + ")");
+
   var menuTmpl = HtmlService.createTemplateFromFile('メニュー');
-  menuTmpl.ログインID = String(e.parameter.user);
+  menuTmpl.ログインID = ユーザー情報.ログインID;
+  menuTmpl.氏名 = ユーザー情報.氏名;
+  menuTmpl.権限 = ユーザー情報.権限;
   return menuTmpl.evaluate();
 }
