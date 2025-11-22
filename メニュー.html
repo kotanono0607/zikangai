@@ -39,11 +39,23 @@
       .menu-button:hover {
         background-color: #45a049;
       }
+      .success-message {
+        background-color: #d4edda;
+        border: 1px solid #c3e6cb;
+        color: #155724;
+        padding: 12px 20px;
+        border-radius: 4px;
+        margin-bottom: 20px;
+        font-size: 1.1em;
+      }
     </style>
   </head>
   <body>
     <div class="container">
       <h2>メニュー</h2>
+      <? if (typeof successMessage !== 'undefined' && successMessage) { ?>
+        <div class="success-message"><?= successMessage ?></div>
+      <? } ?>
       <div class="menu-item">
         <form action="<?= ScriptApp.getService().getUrl() ?>" method="post">
           <input type="hidden" name="action" value="時間外報告" />

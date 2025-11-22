@@ -76,6 +76,10 @@ function doPost(e) {
     case "sendText":
       return handleSendText(e, ss);
 
+    // deleteRecord アクション（データ削除）
+    case "deleteRecord":
+      return handleDeleteRecord(e, ss);
+
     // それ以外はログイン画面へ
     default:
       return HtmlService.createTemplateFromFile('login').evaluate();

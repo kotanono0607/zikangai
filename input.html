@@ -140,6 +140,14 @@
       document.getElementById('戻るフォーム').submit();
     }
 
+    function 送信確認(){
+      const 時間外 = document.getElementById('時間外_hidden').value;
+      const 振替時間 = document.getElementById('振替時間_hidden').value;
+      const 年月 = "<?= 選択年月 ?>";
+      const メッセージ = 年月 + " のデータを保存しますか？\n\n時間外: " + 時間外 + "時間\n振替時間: " + 振替時間 + "時間";
+      return confirm(メッセージ);
+    }
+
     // ページロード時に実行
     window.addEventListener('DOMContentLoaded', () => {
       const otInt = document.getElementById('ot_int');
@@ -199,7 +207,10 @@
       <label>サービス時間:</label>
       <p id="serviceTime">0.00</p>
 
-      <input type="submit" value="送信" />
+      <label>備考（任意）:</label>
+      <textarea name="備考" id="備考" rows="3" style="width:100%; padding:10px; border:1px solid #ccc; border-radius:4px; font-size:1rem;" placeholder="例: プロジェクトA対応、納期対応など"><?= typeof 選択年月 !== 'undefined' && typeof options !== 'undefined' ? (options.find(function(opt) { return opt.年月 === 選択年月; }) || {}).D || '' : '' ?></textarea>
+
+      <input type="submit" value="送信" onclick="return 送信確認()" />
       <input type="button" value="戻る" onclick="戻る()" />
     </form>
 

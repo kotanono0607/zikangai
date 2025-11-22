@@ -105,6 +105,18 @@
       transition: background 0.3s;
     }
     .btn-back:hover { background-color: #666; }
+    .btn-delete {
+      background-color: #dc3545;
+      color: #fff;
+      padding: 8px 16px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      margin-top: 10px;
+      transition: background 0.3s;
+    }
+    .btn-delete:hover { background-color: #c82333; }
   </style>
 </head>
 <body>
@@ -144,6 +156,12 @@
               <span class="data-label">サービス時間</span>
               <span class="data-value"><strong><?= serviceTime.toFixed(2) ?></strong></span>
             </div>
+            <form action="<?= ScriptApp.getService().getUrl() ?>" method="post" style="display:inline;" onsubmit="return confirm('<?= options[i].年月 ?> のデータを削除しますか？');">
+              <input type="hidden" name="action" value="deleteRecord" />
+              <input type="hidden" name="ログインID" value="<?= ログインID ?>" />
+              <input type="hidden" name="年月" value="<?= options[i].年月 ?>" />
+              <button type="submit" class="btn-delete">🗑️ 削除</button>
+            </form>
           <? } ?>
         </div>
       </li>
