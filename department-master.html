@@ -231,7 +231,7 @@
           if (data.success) {
             showMessage(data.message, 'success');
             setTimeout(function() {
-              location.reload();
+              reloadPage();
             }, 1000);
           } else {
             showMessage(data.message, 'error');
@@ -274,7 +274,7 @@
           if (data.success) {
             showMessage(data.message, 'success');
             setTimeout(function() {
-              location.reload();
+              reloadPage();
             }, 1000);
           } else {
             showMessage(data.message, 'error');
@@ -295,6 +295,28 @@
       setTimeout(function() {
         messageDiv.innerHTML = '';
       }, 3000);
+    }
+
+    // ページをリロード（POSTで再表示）
+    function reloadPage() {
+      var form = document.createElement('form');
+      form.method = 'post';
+      form.action = '<?= ScriptApp.getService().getUrl() ?>';
+
+      var actionInput = document.createElement('input');
+      actionInput.type = 'hidden';
+      actionInput.name = 'action';
+      actionInput.value = 'departmentMaster';
+      form.appendChild(actionInput);
+
+      var idInput = document.createElement('input');
+      idInput.type = 'hidden';
+      idInput.name = 'ログインID';
+      idInput.value = ログインID;
+      form.appendChild(idInput);
+
+      document.body.appendChild(form);
+      form.submit();
     }
 
     // メニューに戻る
