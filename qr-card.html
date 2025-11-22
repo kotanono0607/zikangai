@@ -65,11 +65,11 @@
     }
 
     .qr-code-area img {
-      width: 200mm;
-      height: 200mm;
-      border: 3px solid #4CAF50;
-      border-radius: 12px;
-      padding: 10mm;
+      width: 6.25mm;
+      height: 6.25mm;
+      border: 1px solid #4CAF50;
+      border-radius: 2px;
+      padding: 1mm;
       background: white;
     }
 
@@ -216,7 +216,7 @@
 
       <!-- QRコード -->
       <div class="qr-code-area">
-        <img src="<?!= getQrCodeImageUrl(user.ログインID, 300) ?>"
+        <img src="<?!= getQrCodeImageUrl(user.ログインID, 100) ?>"
              alt="QRコード - <?= user.ログインID ?>">
       </div>
 
