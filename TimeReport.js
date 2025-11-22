@@ -31,9 +31,6 @@ function is年月編集可能(年月文字列) {
   } else if (fiscalYearOffset === -1 && is猶予期間) {
     // 前年度：4月〜5月のみ編集可能
     return true;
-  } else if (fiscalYearOffset === 1) {
-    // 翌年度：編集可能
-    return true;
   }
 
   // それ以外：編集不可
@@ -42,7 +39,7 @@ function is年月編集可能(年月文字列) {
 
 /**
  * 年月リストを自動生成（年度ベース：4月〜3月）
- * 過去2年度 + 当年度 + 翌年度 = 合計4年度分（48ヶ月）を生成
+ * 過去2年度 + 当年度 = 合計3年度分（36ヶ月）を生成
  * 各年月に編集可能フラグと年度情報を付与
  */
 function 年月リスト自動生成() {
@@ -58,8 +55,8 @@ function 年月リスト自動生成() {
 
   var 年度別データ = {};
 
-  // 過去2年度 + 当年度 + 翌年度 = 4年度分を生成
-  for (var fiscalYearOffset = -2; fiscalYearOffset <= 1; fiscalYearOffset++) {
+  // 過去2年度 + 当年度 = 3年度分を生成
+  for (var fiscalYearOffset = -2; fiscalYearOffset <= 0; fiscalYearOffset++) {
     var fiscalYear = currentFiscalYear + fiscalYearOffset;
     var 年度名 = fiscalYear + "年度";
 
@@ -71,11 +68,8 @@ function 年月リスト自動生成() {
     } else if (fiscalYearOffset === -1 && is猶予期間) {
       // 前年度：4月〜5月のみ編集可能
       editable = true;
-    } else if (fiscalYearOffset === 1) {
-      // 翌年度：編集可能
-      editable = true;
     }
-    // fiscalYearOffset <= -2（前々年度以前）: editable = false
+    // fiscalYearOffset === -2（前々年度）: editable = false
 
     年度別データ[年度名] = {
       fiscalYear: fiscalYear,
