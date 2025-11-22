@@ -1,13 +1,11 @@
 /**
- * Routing.gs 全文修正 Ver1.1
- * Google Apps Script: Web アプリのルーティング定義
+ * Routing.gs 全斁E��正 Ver1.1
+ * Google Apps Script: Web アプリのルーチE��ング定義
  */
 
 /**
- * GET リクエストを処理
- * @param {Object} e イベントパラメータ
- * @returns {HtmlOutput} HTML 出力
- */
+ * GET リクエストを処琁E * @param {Object} e イベントパラメータ
+ * @returns {HtmlOutput} HTML 出劁E */
 function doGet(e) {
   var page = e.parameter.page;
   Logger.log("doGet called, page: " + page);
@@ -17,86 +15,73 @@ function doGet(e) {
     return inputTmpl.evaluate();
 
   } else if (page === 'menu') {
-    // メニュー画面へ遷移：ログインID をテンプレートに設定
-    var menuTmpl = HtmlService.createTemplateFromFile('メニュー');
+    // メニュー画面へ遷移�E�ログインID をテンプレートに設宁E    var menuTmpl = HtmlService.createTemplateFromFile('メニュー');
     menuTmpl.ログインID = e.parameter.ログインID;
     return menuTmpl.evaluate();
 
   } else {
-    // デフォルト：ログイン画面
+    // チE��ォルト：ログイン画面
     var loginTmpl = HtmlService.createTemplateFromFile('login');
     return loginTmpl.evaluate();
   }
 }
 
 /**
- * POST リクエストを処理
- * @param {Object} e イベントパラメータ
- * @returns {HtmlOutput} HTML 出力
- */
+ * POST リクエストを処琁E * @param {Object} e イベントパラメータ
+ * @returns {HtmlOutput} HTML 出劁E */
 function doPost(e) {
   Logger.log("doPost action: " + e.parameter.action);
-  var ss = SpreadsheetApp.openById("1eeAjZ02CldS5XHW88X_EWy4GvvrOXwMBA_LDM39R58o");
+  var ss = SpreadsheetApp.openById("1eabKd-YqMH48rX5BdhFd_MU6KWFdWHAWt2t5-Y96reA");
   var action = e.parameter.action;
 
   switch (action) {
-    // ログイン処理
-    case "login":
-      return ログイン処理(e, ss);
+    // ログイン処琁E    case "login":
+      return ログイン処琁Ee, ss);
 
-    // 時間外報告（年月選択画面へ）
-    case "時間外報告":
+    // 時間外報告（年月選択画面へ�E�E    case "時間外報呁E:
       return handleTimeReport(e, ss);
 
     // 時間外集計メニュー
-    case "時間外集計":
-      var 集計Tmpl = HtmlService.createTemplateFromFile('集計メニュー');
-      集計Tmpl.ログインID = e.parameter.ログインID;
-      return 集計Tmpl.evaluate();
+    case "時間外集訁E:
+      var 雁E��Empl = HtmlService.createTemplateFromFile('雁E��メニュー');
+      雁E��Empl.ログインID = e.parameter.ログインID;
+      return 雁E��Empl.evaluate();
 
-    // 所属別集計
-    case "所属別集計":
+    // 所属別雁E��E    case "所属別雁E��E:
       return handleShozokuBetsuSuikei(e, ss);
 
-    // 年月別集計
-    case "年月別集計":
+    // 年月別雁E��E    case "年月別雁E��E:
       return handleNengetsuBetsuSuikei(e, ss);
 
-    // select アクション（年月選択→入力画面）
-    case "select":
-      Logger.log("select action with 年月: " + e.parameter.年月);
+    // select アクション�E�年月選択�E入力画面�E�E    case "select":
+      Logger.log("select action with 年朁E " + e.parameter.年朁E;
       var selectTmpl = HtmlService.createTemplateFromFile('input');
       selectTmpl.ログインID   = e.parameter.ログインID;
-      selectTmpl.選択年月     = e.parameter.年月;
-      selectTmpl.前回時間外   = e.parameter.時間外;
+      selectTmpl.選択年朁E    = e.parameter.年朁E
+      selectTmpl.前回時間夁E  = e.parameter.時間夁E
       selectTmpl.前回振替時間 = e.parameter.振替時間;
       return selectTmpl.evaluate();
 
-    // sendText アクション（入力値保存→メニュー画面へ）
-    case "sendText":
+    // sendText アクション�E��E力値保存�Eメニュー画面へ�E�E    case "sendText":
       return handleSendText(e, ss);
 
-    // それ以外はログイン画面へ
+    // それ以外�Eログイン画面へ
     default:
       return HtmlService.createTemplateFromFile('login').evaluate();
   }
 }
 
 /**
- * ログイン処理
- * @param {Object} e イベントパラメータ
- * @param {Spreadsheet} ss スプレッドシート
- * @returns {HtmlOutput} メニュー画面 or エラーメッセージ
+ * ログイン処琁E * @param {Object} e イベントパラメータ
+ * @param {Spreadsheet} ss スプレチE��シーチE * @returns {HtmlOutput} メニュー画面 or エラーメチE��ージ
  */
-function ログイン処理(e, ss) {
-  var sheetユーザー名 = ss.getSheetByName("ユーザー名");
-  var dataユーザー = sheetユーザー名
-    .getRange(2, 1, sheetユーザー名.getLastRow() - 1, 1)
+function ログイン処琁Ee, ss) {
+  var sheetユーザー吁E= ss.getSheetByName("ユーザー吁E);
+  var dataユーザー = sheetユーザー吁E    .getRange(2, 1, sheetユーザー吁EgetLastRow() - 1, 1)
     .getValues();
   Logger.log("ユーザー名データ: " + JSON.stringify(dataユーザー));
 
-  // フォーム値とシート値を文字列比較
-  var loginValid = dataユーザー.some(function(row) {
+  // フォーム値とシート値を文字�E比輁E  var loginValid = dataユーザー.some(function(row) {
     return String(row[0]) === String(e.parameter.user);
   });
   Logger.log("loginValid: " + loginValid);
@@ -105,7 +90,7 @@ function ログイン処理(e, ss) {
     return HtmlService.createHtmlOutput("Invalid login");
   }
 
-  // ログイン成功後はメニュー画面
+  // ログイン成功後�Eメニュー画面
   var menuTmpl = HtmlService.createTemplateFromFile('メニュー');
   menuTmpl.ログインID = String(e.parameter.user);
   return menuTmpl.evaluate();
