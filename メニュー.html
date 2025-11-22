@@ -1,119 +1,235 @@
-<!-- メニュー.html -->
+<!-- メニュー.html - Bootstrap 5版 -->
 <!DOCTYPE html>
-<html>
-  <head>
-    <base target="_top">
-    <style>
+<html lang="ja">
+<head>
+  <base target="_top">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>メニュー - 時間外報告システム</title>
+
+  <!-- Bootstrap 5.3 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Bootstrap Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+
+  <style>
+    body {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 2rem 1rem;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    .menu-container {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .welcome-card {
+      background: white;
+      border-radius: 20px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+      padding: 2rem;
+      margin-bottom: 2rem;
+      text-align: center;
+    }
+
+    .welcome-card h2 {
+      color: #4CAF50;
+      margin-bottom: 1rem;
+      font-weight: 600;
+    }
+
+    .user-info {
+      font-size: 1.2rem;
+      color: #495057;
+      margin-bottom: 0;
+    }
+
+    .admin-badge {
+      background: linear-gradient(135deg, #ffc107 0%, #ff9800 100%);
+      color: white;
+      padding: 0.25rem 0.75rem;
+      border-radius: 20px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      margin-left: 0.5rem;
+      display: inline-block;
+    }
+
+    .menu-section {
+      background: white;
+      border-radius: 20px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+      padding: 2rem;
+      margin-bottom: 2rem;
+    }
+
+    .section-title {
+      font-size: 1.3rem;
+      font-weight: 600;
+      color: #495057;
+      margin-bottom: 1.5rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 2px solid #f0f0f0;
+    }
+
+    .menu-btn {
+      border: none;
+      border-radius: 15px;
+      padding: 1.25rem;
+      font-size: 1.1rem;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      margin-bottom: 1rem;
+      width: 100%;
+      text-align: left;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .menu-btn i {
+      font-size: 1.5rem;
+      width: 2rem;
+      text-align: center;
+    }
+
+    .menu-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+    }
+
+    .btn-primary-custom {
+      background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+      color: white;
+    }
+
+    .btn-info-custom {
+      background: linear-gradient(135deg, #2196F3 0%, #1976D2 100%);
+      color: white;
+    }
+
+    .btn-warning-custom {
+      background: linear-gradient(135deg, #FF9800 0%, #F57C00 100%);
+      color: white;
+    }
+
+    .btn-purple-custom {
+      background: linear-gradient(135deg, #9C27B0 0%, #7B1FA2 100%);
+      color: white;
+    }
+
+    .success-alert {
+      border-radius: 15px;
+      border: none;
+      box-shadow: 0 4px 12px rgba(76, 175, 80, 0.2);
+      margin-bottom: 1.5rem;
+    }
+
+    @media (max-width: 576px) {
       body {
-        font-family: Arial, sans-serif;
-        background-color: #f4f4f4;
-        padding: 20px;
-        color: #333;
+        padding: 1rem 0.5rem;
       }
-      .container {
-        max-width: 600px;
-        margin: 0 auto;
-        background: #fff;
-        padding: 30px;
-        border-radius: 8px;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        text-align: center;
+
+      .welcome-card, .menu-section {
+        padding: 1.5rem;
       }
-      h2 {
-        color: #4CAF50;
-        margin-bottom: 30px;
+
+      .menu-btn {
+        font-size: 1rem;
+        padding: 1rem;
       }
-      .menu-item {
-        margin: 20px 0;
-      }
-      .menu-button {
-        padding: 15px 30px;
-        background-color: #4CAF50;
-        border: none;
-        color: #fff;
-        border-radius: 4px;
-        font-size: 1.2em;
-        cursor: pointer;
-        transition: background 0.3s;
-      }
-      .menu-button:hover {
-        background-color: #45a049;
-      }
-      .success-message {
-        background-color: #d4edda;
-        border: 1px solid #c3e6cb;
-        color: #155724;
-        padding: 12px 20px;
-        border-radius: 4px;
-        margin-bottom: 20px;
-        font-size: 1.1em;
-      }
-    </style>
-  </head>
-  <body>
-    <div class="container">
-      <h2>📅 時間外報告システム</h2>
-      <p style="margin-bottom: 20px;">
+    }
+  </style>
+</head>
+<body>
+  <div class="menu-container">
+    <!-- ウェルカムカード -->
+    <div class="welcome-card">
+      <h2><i class="bi bi-calendar-check"></i> 時間外報告システム</h2>
+      <p class="user-info">
         ようこそ、<strong><?= 氏名 || ログインID ?></strong> さん
         <? if (typeof 権限 !== 'undefined' && 権限 === '管理者') { ?>
-          <span style="background:#fff3cd; padding:3px 8px; border-radius:4px; font-size:0.9em; margin-left:8px;">👑 管理者</span>
+          <span class="admin-badge"><i class="bi bi-star-fill"></i> 管理者</span>
         <? } ?>
       </p>
+    </div>
 
-      <? if (typeof successMessage !== 'undefined' && successMessage) { ?>
-        <div class="success-message"><?= successMessage ?></div>
-      <? } ?>
+    <!-- 成功メッセージ -->
+    <? if (typeof successMessage !== 'undefined' && successMessage) { ?>
+      <div class="alert alert-success success-alert" role="alert">
+        <i class="bi bi-check-circle-fill"></i> <?= successMessage ?>
+      </div>
+    <? } ?>
+
+    <!-- 一般メニュー -->
+    <div class="menu-section">
+      <h3 class="section-title"><i class="bi bi-menu-button-wide"></i> メニュー</h3>
 
       <!-- 時間外報告 -->
-      <div class="menu-item">
-        <form action="<?= ScriptApp.getService().getUrl() ?>" method="post">
-          <input type="hidden" name="action" value="時間外報告" />
-          <input type="hidden" name="ログインID" value="<?= ログインID ?>" />
-          <input class="menu-button" type="submit" value="📝 時間外報告" />
-        </form>
-      </div>
+      <form action="<?= ScriptApp.getService().getUrl() ?>" method="post">
+        <input type="hidden" name="action" value="時間外報告" />
+        <input type="hidden" name="ログインID" value="<?= ログインID ?>" />
+        <button type="submit" class="menu-btn btn-primary-custom">
+          <i class="bi bi-pencil-square"></i>
+          <div>
+            <div>時間外報告</div>
+            <small style="opacity: 0.8; font-size: 0.85rem;">勤務時間を記録</small>
+          </div>
+        </button>
+      </form>
 
-      <!-- 所属変更（全ユーザー） -->
-      <div class="menu-item">
-        <form action="<?= ScriptApp.getService().getUrl() ?>" method="post">
-          <input type="hidden" name="action" value="profileEdit" />
-          <input type="hidden" name="ログインID" value="<?= ログインID ?>" />
-          <input class="menu-button" type="submit" value="👤 所属変更" style="background-color:#2196F3;" />
-        </form>
-      </div>
-
-      <? if (typeof 権限 !== 'undefined' && 権限 === '管理者') { ?>
-        <!-- 管理者メニュー -->
-        <hr style="margin: 30px 0; border: none; border-top: 2px solid #e0e0e0;" />
-        <h3 style="color: #666; font-size: 1.1em;">管理者メニュー</h3>
-
-        <div class="menu-item">
-          <form action="<?= ScriptApp.getService().getUrl() ?>" method="post">
-            <input type="hidden" name="action" value="userList" />
-            <input type="hidden" name="ログインID" value="<?= ログインID ?>" />
-            <input class="menu-button" type="submit" value="👥 ユーザー管理" style="background-color:#FF9800;" />
-          </form>
-        </div>
-
-        <div class="menu-item">
-          <form action="<?= ScriptApp.getService().getUrl() ?>" method="post">
-            <input type="hidden" name="action" value="departmentMaster" />
-            <input type="hidden" name="ログインID" value="<?= ログインID ?>" />
-            <input class="menu-button" type="submit" value="📋 所属マスタ管理" style="background-color:#9C27B0;" />
-          </form>
-        </div>
-      <? } ?>
-
-      <!-- ▼ 以下、時間外集計ボタンを一時的にコメントアウト -->
-      <!--
-      <div class="menu-item">
-        <form action="<?= ScriptApp.getService().getUrl() ?>" method="post">
-          <input type="hidden" name="action" value="時間外集計" />
-          <input type="hidden" name="ログインID" value="<?= ログインID ?>" />
-          <input class="menu-button" type="submit" value="時間外集計" />
-        </form>
-      </div>
-      -->
+      <!-- 所属変更 -->
+      <form action="<?= ScriptApp.getService().getUrl() ?>" method="post">
+        <input type="hidden" name="action" value="profileEdit" />
+        <input type="hidden" name="ログインID" value="<?= ログインID ?>" />
+        <button type="submit" class="menu-btn btn-info-custom">
+          <i class="bi bi-person-badge"></i>
+          <div>
+            <div>所属変更</div>
+            <small style="opacity: 0.8; font-size: 0.85rem;">部署情報を更新</small>
+          </div>
+        </button>
+      </form>
     </div>
-  </body>
+
+    <!-- 管理者メニュー -->
+    <? if (typeof 権限 !== 'undefined' && 権限 === '管理者') { ?>
+      <div class="menu-section">
+        <h3 class="section-title"><i class="bi bi-shield-lock-fill"></i> 管理者メニュー</h3>
+
+        <!-- ユーザー管理 -->
+        <form action="<?= ScriptApp.getService().getUrl() ?>" method="post">
+          <input type="hidden" name="action" value="userList" />
+          <input type="hidden" name="ログインID" value="<?= ログインID ?>" />
+          <button type="submit" class="menu-btn btn-warning-custom">
+            <i class="bi bi-people-fill"></i>
+            <div>
+              <div>ユーザー管理</div>
+              <small style="opacity: 0.8; font-size: 0.85rem;">社員の登録・編集・退職処理</small>
+            </div>
+          </button>
+        </form>
+
+        <!-- 所属マスタ管理 -->
+        <form action="<?= ScriptApp.getService().getUrl() ?>" method="post">
+          <input type="hidden" name="action" value="departmentMaster" />
+          <input type="hidden" name="ログインID" value="<?= ログインID ?>" />
+          <button type="submit" class="menu-btn btn-purple-custom">
+            <i class="bi bi-diagram-3-fill"></i>
+            <div>
+              <div>所属マスタ管理</div>
+              <small style="opacity: 0.8; font-size: 0.85rem;">部署・所属の設定</small>
+            </div>
+          </button>
+        </form>
+      </div>
+    <? } ?>
+  </div>
+
+  <!-- Bootstrap 5.3 JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
 </html>
