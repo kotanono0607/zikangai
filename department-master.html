@@ -215,19 +215,29 @@
         所属2: 所属2
       };
 
-      fetch(location.href, {
+      fetch('<?= ScriptApp.getService().getUrl() ?>', {
         method: 'POST',
         body: new URLSearchParams(formData)
       })
-      .then(response => response.json())
-      .then(data => {
-        if (data.success) {
-          showMessage(data.message, 'success');
-          setTimeout(function() {
-            location.reload();
-          }, 1000);
-        } else {
-          showMessage(data.message, 'error');
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('HTTP error! status: ' + response.status);
+        }
+        return response.text();
+      })
+      .then(text => {
+        try {
+          var data = JSON.parse(text);
+          if (data.success) {
+            showMessage(data.message, 'success');
+            setTimeout(function() {
+              location.reload();
+            }, 1000);
+          } else {
+            showMessage(data.message, 'error');
+          }
+        } catch (e) {
+          showMessage('レスポンスの解析エラー: ' + e.message + '\n\nレスポンス: ' + text.substring(0, 200), 'error');
         }
       })
       .catch(error => {
@@ -248,19 +258,29 @@
         所属2: 所属2
       };
 
-      fetch(location.href, {
+      fetch('<?= ScriptApp.getService().getUrl() ?>', {
         method: 'POST',
         body: new URLSearchParams(formData)
       })
-      .then(response => response.json())
-      .then(data => {
-        if (data.success) {
-          showMessage(data.message, 'success');
-          setTimeout(function() {
-            location.reload();
-          }, 1000);
-        } else {
-          showMessage(data.message, 'error');
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('HTTP error! status: ' + response.status);
+        }
+        return response.text();
+      })
+      .then(text => {
+        try {
+          var data = JSON.parse(text);
+          if (data.success) {
+            showMessage(data.message, 'success');
+            setTimeout(function() {
+              location.reload();
+            }, 1000);
+          } else {
+            showMessage(data.message, 'error');
+          }
+        } catch (e) {
+          showMessage('レスポンスの解析エラー: ' + e.message + '\n\nレスポンス: ' + text.substring(0, 200), 'error');
         }
       })
       .catch(error => {
