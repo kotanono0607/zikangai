@@ -1,15 +1,47 @@
 //=================================================================================================================================================
 // TimeReport.gs
+
+/**
+ * 年月リストを自動生成（年度ベース：4月〜3月）
+ * 過去2年度 + 当年度 + 翌年度 = 合計4年度分（48ヶ月）を生成
+ */
+function 年月リスト自動生成() {
+  var today = new Date();
+  var currentYear = today.getFullYear();
+  var currentMonth = today.getMonth() + 1; // 1-12
+
+  // 現在の年度を判定（4月以降なら当年、3月以前なら前年）
+  var currentFiscalYear = (currentMonth >= 4) ? currentYear : currentYear - 1;
+
+  var 年月リスト = [];
+
+  // 過去2年度 + 当年度 + 翌年度 = 4年度分を生成
+  for (var fiscalYearOffset = -2; fiscalYearOffset <= 1; fiscalYearOffset++) {
+    var fiscalYear = currentFiscalYear + fiscalYearOffset;
+
+    // 4月〜12月（当年）
+    for (var month = 4; month <= 12; month++) {
+      年月リスト.push([fiscalYear + "年" + month + "月"]);
+    }
+
+    // 1月〜3月（翌年）
+    for (var month = 1; month <= 3; month++) {
+      年月リスト.push([(fiscalYear + 1) + "年" + month + "月"]);
+    }
+  }
+
+  Logger.log("自動生成された年月リスト（" + 年月リスト.length + "件）: " + JSON.stringify(年月リスト));
+  return 年月リスト;
+}
+
 function handleTimeReport(e, ss) {
   var user = e.parameter.ログインID;
   Logger.log("時間外報告 action triggered for user: " + user);
-  
-  var sheet年月 = ss.getSheetByName("年月");
+
   var sheetテーブル = ss.getSheetByName("テーブル");
 
-  var 年月リスト = sheet年月
-                    .getRange(2, 1, sheet年月.getLastRow()-1, 1)
-                    .getValues();
+  // 年月リストを自動生成（シート読み込みから変更）
+  var 年月リスト = 年月リスト自動生成();
   Logger.log("年月リスト: " + JSON.stringify(年月リスト));
 
   var テーブルデータ = [];
