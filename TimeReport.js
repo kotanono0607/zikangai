@@ -2,8 +2,48 @@
 // TimeReport.gs
 
 /**
+ * 指定された年月が編集可能かチェック（サーバーサイドバリデーション）
+ */
+function is年月編集可能(年月文字列) {
+  var today = new Date();
+  var currentYear = today.getFullYear();
+  var currentMonth = today.getMonth() + 1; // 1-12
+  var currentFiscalYear = (currentMonth >= 4) ? currentYear : currentYear - 1;
+  var is猶予期間 = (currentMonth >= 4 && currentMonth <= 5);
+
+  // 年月文字列から年と月を抽出（例: "2025年11月" → 2025, 11）
+  var match = 年月文字列.match(/(\d{4})年(\d{1,2})月/);
+  if (!match) return false;
+
+  var targetYear = parseInt(match[1]);
+  var targetMonth = parseInt(match[2]);
+
+  // 対象年月の年度を判定
+  var targetFiscalYear = (targetMonth >= 4) ? targetYear : targetYear - 1;
+
+  // 年度オフセットを計算
+  var fiscalYearOffset = targetFiscalYear - currentFiscalYear;
+
+  // 編集可否を判定
+  if (fiscalYearOffset === 0) {
+    // 当年度：常に編集可能
+    return true;
+  } else if (fiscalYearOffset === -1 && is猶予期間) {
+    // 前年度：4月〜5月のみ編集可能
+    return true;
+  } else if (fiscalYearOffset === 1) {
+    // 翌年度：編集可能
+    return true;
+  }
+
+  // それ以外：編集不可
+  return false;
+}
+
+/**
  * 年月リストを自動生成（年度ベース：4月〜3月）
  * 過去2年度 + 当年度 + 翌年度 = 合計4年度分（48ヶ月）を生成
+ * 各年月に編集可能フラグと年度情報を付与
  */
 function 年月リスト自動生成() {
   var today = new Date();
@@ -13,25 +53,55 @@ function 年月リスト自動生成() {
   // 現在の年度を判定（4月以降なら当年、3月以前なら前年）
   var currentFiscalYear = (currentMonth >= 4) ? currentYear : currentYear - 1;
 
-  var 年月リスト = [];
+  // 5月末までは前年度も編集可能
+  var is猶予期間 = (currentMonth >= 4 && currentMonth <= 5);
+
+  var 年度別データ = {};
 
   // 過去2年度 + 当年度 + 翌年度 = 4年度分を生成
   for (var fiscalYearOffset = -2; fiscalYearOffset <= 1; fiscalYearOffset++) {
     var fiscalYear = currentFiscalYear + fiscalYearOffset;
+    var 年度名 = fiscalYear + "年度";
+
+    // 編集可否を判定
+    var editable = false;
+    if (fiscalYearOffset === 0) {
+      // 当年度：常に編集可能
+      editable = true;
+    } else if (fiscalYearOffset === -1 && is猶予期間) {
+      // 前年度：4月〜5月のみ編集可能
+      editable = true;
+    } else if (fiscalYearOffset === 1) {
+      // 翌年度：編集可能
+      editable = true;
+    }
+    // fiscalYearOffset <= -2（前々年度以前）: editable = false
+
+    年度別データ[年度名] = {
+      fiscalYear: fiscalYear,
+      editable: editable,
+      months: []
+    };
 
     // 4月〜12月（当年）
     for (var month = 4; month <= 12; month++) {
-      年月リスト.push([fiscalYear + "年" + month + "月"]);
+      年度別データ[年度名].months.push({
+        年月: fiscalYear + "年" + month + "月",
+        editable: editable
+      });
     }
 
     // 1月〜3月（翌年）
     for (var month = 1; month <= 3; month++) {
-      年月リスト.push([(fiscalYear + 1) + "年" + month + "月"]);
+      年度別データ[年度名].months.push({
+        年月: (fiscalYear + 1) + "年" + month + "月",
+        editable: editable
+      });
     }
   }
 
-  Logger.log("自動生成された年月リスト（" + 年月リスト.length + "件）: " + JSON.stringify(年月リスト));
-  return 年月リスト;
+  Logger.log("自動生成された年度別データ: " + JSON.stringify(年度別データ));
+  return 年度別データ;
 }
 
 function handleTimeReport(e, ss) {
@@ -40,9 +110,13 @@ function handleTimeReport(e, ss) {
 
   var sheetテーブル = ss.getSheetByName("テーブル");
 
-  // 年月リストを自動生成（シート読み込みから変更）
-  var 年月リスト = 年月リスト自動生成();
-  Logger.log("年月リスト: " + JSON.stringify(年月リスト));
+  // 年月リストを年度別に自動生成
+  var 年度別データ = 年月リスト自動生成();
+
+  var today = new Date();
+  var currentYear = today.getFullYear();
+  var currentMonth = today.getMonth() + 1;
+  var currentFiscalYear = (currentMonth >= 4) ? currentYear : currentYear - 1;
 
   var テーブルデータ = [];
   if(sheetテーブル.getLastRow() > 1) {
@@ -52,32 +126,59 @@ function handleTimeReport(e, ss) {
   }
   Logger.log("テーブルデータ: " + JSON.stringify(テーブルデータ));
 
-  var options = [];
-  年月リスト.forEach(function(年月行) {
-    var 年月Str = String(年月行[0]);
-    var 時間外Val = "", 振替時間Val = "", 備考Val = "";
-    for(var k = 0; k < テーブルデータ.length; k++) {
-      var テーブル年月 = "";
-      if(テーブルデータ[k][0] instanceof Date) {
-        テーブル年月 = Utilities.formatDate(テーブルデータ[k][0], Session.getScriptTimeZone(), "yyyy年M月");
-      } else {
-        テーブル年月 = String(テーブルデータ[k][0]);
+  // 年度別にデータをマージ
+  var 年度配列 = [];
+  for (var 年度名 in 年度別データ) {
+    var 年度Info = 年度別データ[年度名];
+    var monthsWithData = [];
+
+    年度Info.months.forEach(function(monthObj) {
+      var 年月Str = monthObj.年月;
+      var 時間外Val = "", 振替時間Val = "", 備考Val = "";
+
+      // テーブルから既存データを検索
+      for(var k = 0; k < テーブルデータ.length; k++) {
+        var テーブル年月 = "";
+        if(テーブルデータ[k][0] instanceof Date) {
+          テーブル年月 = Utilities.formatDate(テーブルデータ[k][0], Session.getScriptTimeZone(), "yyyy年M月");
+        } else {
+          テーブル年月 = String(テーブルデータ[k][0]);
+        }
+        var テーブルユーザー = String(テーブルデータ[k][1]);
+        if(テーブル年月 == 年月Str && テーブルユーザー == String(user)) {
+          時間外Val = テーブルデータ[k][2];
+          振替時間Val = テーブルデータ[k][3];
+          備考Val = テーブルデータ[k][4] || "";
+          break;
+        }
       }
-      var テーブルユーザー = String(テーブルデータ[k][1]);
-      if(テーブル年月 == 年月Str && テーブルユーザー == String(user)) {
-        時間外Val = テーブルデータ[k][2];
-        振替時間Val = テーブルデータ[k][3];
-        備考Val = テーブルデータ[k][4] || "";
-        break;
-      }
-    }
-    options.push({年月: 年月Str, B: 時間外Val, C: 振替時間Val, D: 備考Val});
-  });
-  Logger.log("options: " + JSON.stringify(options));
+
+      monthsWithData.push({
+        年月: 年月Str,
+        時間外: 時間外Val,
+        振替時間: 振替時間Val,
+        備考: 備考Val,
+        editable: monthObj.editable
+      });
+    });
+
+    年度配列.push({
+      年度名: 年度名,
+      fiscalYear: 年度Info.fiscalYear,
+      editable: 年度Info.editable,
+      isCurrentYear: (年度Info.fiscalYear === currentFiscalYear),
+      months: monthsWithData
+    });
+  }
+
+  // 年度を降順にソート（新しい年度が上）
+  年度配列.sort(function(a, b) { return b.fiscalYear - a.fiscalYear; });
+
+  Logger.log("年度配列: " + JSON.stringify(年度配列));
 
   var tmpl = HtmlService.createTemplateFromFile('select');
   tmpl.ログインID = user;
-  tmpl.options = options;
+  tmpl.年度データ = 年度配列;
   return tmpl.evaluate();
 }
 function handleSendText(e, ss) {
@@ -86,6 +187,12 @@ function handleSendText(e, ss) {
   var 時間外値 = parseFloat(e.parameter.時間外) || 0;
   var 振替時間値 = parseFloat(e.parameter.振替時間) || 0;
   var 備考値 = e.parameter.備考 || "";
+
+  // 編集権限チェック（サーバーサイドバリデーション）
+  if (!is年月編集可能(選択年月)) {
+    Logger.log("編集権限エラー: " + 選択年月 + " は編集不可期間です");
+    return HtmlService.createHtmlOutput("❌ エラー: " + 選択年月 + " は編集できません（確定済み期間）");
+  }
 
   // 入力バリデーション
   if (時間外値 < 0 || 振替時間値 < 0) {
@@ -145,6 +252,15 @@ function handleDeleteRecord(e, ss) {
   var 選択年月 = e.parameter.年月;
 
   Logger.log("deleteRecord action, 入力ID: " + 入力ID + ", 選択年月: " + 選択年月);
+
+  // 編集権限チェック（サーバーサイドバリデーション）
+  if (!is年月編集可能(選択年月)) {
+    Logger.log("削除権限エラー: " + 選択年月 + " は編集不可期間です");
+    var tmpl = HtmlService.createTemplateFromFile('メニュー');
+    tmpl.ログインID = 入力ID;
+    tmpl.successMessage = "❌ エラー: " + 選択年月 + " は削除できません（確定済み期間）";
+    return tmpl.evaluate();
+  }
 
   var sheetテーブル = ss.getSheetByName("テーブル");
   var テーブルデータ = [];

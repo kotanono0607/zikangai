@@ -1,12 +1,10 @@
-<!-- select.html モダンUI版 Ver4.1.2 : 小数点を常に xx.xx 表示 + メニューボタン改修 -->
+<!-- select.html - 年度別アコーディオン版 -->
 <!DOCTYPE html>
 <html>
 <head>
   <base target="_top">
-  <!-- Google Fonts 読み込み -->
-  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;600&display=swap" rel="stylesheet">
   <style>
-    /* 全体設定 */
     body {
       font-family: 'Roboto', sans-serif;
       background: linear-gradient(135deg, #e0e0e0, #ffffff);
@@ -18,10 +16,9 @@
       align-items: center;
       min-height: 100vh;
     }
-    /* コンテナ */
     .container {
       width: 100%;
-      max-width: 600px;
+      max-width: 800px;
       background: #fff;
       border-radius: 12px;
       box-shadow: 0 4px 6px rgba(0,0,0,0.1);
@@ -30,150 +27,272 @@
     h2 {
       text-align: center;
       color: #4CAF50;
-      margin-bottom: 20px;
+      margin-bottom: 30px;
     }
-    ul {
-      list-style: none;
-      padding: 0;
-      margin: 0;
-    }
-    li.list-item {
-      display: flex;
-      flex-direction: row;
-      align-items: center;
-      padding: 15px;
+
+    /* アコーディオンスタイル */
+    .fiscal-year-section {
       margin-bottom: 15px;
-      background: #f9f9f9;
+      border: 1px solid #ddd;
       border-radius: 8px;
-      transition: background 0.3s;
+      overflow: hidden;
     }
-    li.list-item:hover { background: #f1f1f1; }
-    .year-form { margin: 0; }
-    .year-button {
-      padding: 10px 20px;
+    .fiscal-year-header {
+      background: #4CAF50;
+      color: white;
+      padding: 15px 20px;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: background 0.3s;
+      user-select: none;
+    }
+    .fiscal-year-header:hover {
+      background: #45a049;
+    }
+    .fiscal-year-header.readonly {
+      background: #888;
+    }
+    .fiscal-year-header.readonly:hover {
+      background: #777;
+    }
+    .fiscal-year-title {
+      font-size: 1.2rem;
+      font-weight: 600;
+    }
+    .fiscal-year-badge {
+      background: rgba(255,255,255,0.3);
+      padding: 4px 12px;
+      border-radius: 12px;
+      font-size: 0.85rem;
+      margin-left: 10px;
+    }
+    .accordion-icon {
+      font-size: 1.5rem;
+      transition: transform 0.3s;
+    }
+    .accordion-icon.expanded {
+      transform: rotate(180deg);
+    }
+
+    /* 月リスト */
+    .months-container {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s ease-out;
+      background: #f9f9f9;
+    }
+    .months-container.expanded {
+      max-height: 2000px;
+      transition: max-height 0.5s ease-in;
+    }
+    .month-item {
+      display: flex;
+      align-items: center;
+      padding: 15px 20px;
+      border-bottom: 1px solid #e0e0e0;
+      transition: background 0.2s;
+    }
+    .month-item:last-child {
+      border-bottom: none;
+    }
+    .month-item:hover {
+      background: #f1f1f1;
+    }
+    .month-item.readonly {
+      background: #fafafa;
+    }
+    .month-name {
+      font-weight: 500;
+      min-width: 120px;
+      font-size: 1rem;
+    }
+    .month-data {
+      display: flex;
+      flex: 1;
+      gap: 15px;
+      align-items: center;
+    }
+    .data-badge {
+      padding: 6px 12px;
+      background: #eef9f1;
+      border-radius: 6px;
+      font-size: 0.9rem;
+      min-width: 100px;
+      text-align: center;
+    }
+    .data-badge.empty {
+      background: #f0f0f0;
+      color: #888;
+    }
+    .data-label {
+      font-size: 0.75rem;
+      color: #666;
+      display: block;
+    }
+    .data-value {
+      font-weight: 500;
+      color: #333;
+    }
+    .month-actions {
+      display: flex;
+      gap: 10px;
+    }
+    .btn-edit {
+      padding: 8px 16px;
       background-color: #4CAF50;
       border: none;
       color: #fff;
       border-radius: 6px;
       cursor: pointer;
+      font-size: 0.9rem;
       transition: background 0.3s;
-      font-size: 1rem;
-      font-weight: 500;
     }
-    .year-button:hover { background-color: #45a049; }
-    .data-display {
-      display: flex;
-      flex: 1;
-      justify-content: flex-end;
-      gap: 20px;
-      align-items: center;
+    .btn-edit:hover {
+      background-color: #45a049;
     }
-    .data-item {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 5px 10px;
-      background: #eef9f1;
+    .btn-delete {
+      padding: 8px 16px;
+      background-color: #dc3545;
+      border: none;
+      color: #fff;
       border-radius: 6px;
-      min-width: 80px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      transition: background 0.3s;
     }
-    .data-label {
-      font-size: 0.8rem;
-      color: #555;
+    .btn-delete:hover {
+      background-color: #c82333;
     }
-    .data-value {
-      font-size: 1rem;
-      font-weight: 500;
-      color: #333;
+    .readonly-badge {
+      padding: 6px 12px;
+      background: #e0e0e0;
+      color: #666;
+      border-radius: 6px;
+      font-size: 0.85rem;
     }
-    .not-entered {
-      color: #888;
-      font-style: italic;
-      text-align: center;
-    }
+
+    /* メニューボタン */
     .btn-back {
       display: block;
       width: 100%;
       padding: 12px;
-      margin-top: 20px;
+      margin-top: 30px;
       background-color: #888;
       color: #fff;
       text-align: center;
       border-radius: 6px;
-      text-decoration: none;
-      font-size: 1rem;
-      transition: background 0.3s;
-    }
-    .btn-back:hover { background-color: #666; }
-    .btn-delete {
-      background-color: #dc3545;
-      color: #fff;
-      padding: 8px 16px;
       border: none;
-      border-radius: 4px;
+      font-size: 1rem;
       cursor: pointer;
-      font-size: 0.9rem;
-      margin-top: 10px;
       transition: background 0.3s;
     }
-    .btn-delete:hover { background-color: #c82333; }
+    .btn-back:hover {
+      background-color: #666;
+    }
   </style>
 </head>
 <body>
   <div class="container">
-    <h2>西暦＋月数を選択してください</h2>
-    <ul>
-      <? for (var i = 0; i < options.length; i++) { ?>
-      <? /* --- 小数点以下 2 桁で常時表示するため toFixed(2) で整形 --- */
-         var Bnum = (options[i].B !== '' && options[i].B != null) ? Number(options[i].B) : null;
-         var Cnum = (options[i].C !== '' && options[i].C != null) ? Number(options[i].C) : null;
-         var Bfmt = (Bnum !== null) ? Bnum.toFixed(2) : "";
-         var Cfmt = (Cnum !== null) ? Cnum.toFixed(2) : "";
-         var serviceTime = (Bnum || 0) - (Cnum || 0);
-      ?>
-      <li class="list-item">
-        <form class="year-form" action="<?= ScriptApp.getService().getUrl() ?>" method="post">
-          <input type="hidden" name="action" value="select" />
-          <input type="hidden" name="ログインID" value="<?= ログインID ?>" />
-          <input type="hidden" name="年月" value="<?= options[i].年月 ?>" />
-          <input type="hidden" name="時間外" value="<?= options[i].B ?>" />
-          <input type="hidden" name="振替時間" value="<?= options[i].C ?>" />
-          <button type="submit" class="year-button"><?= options[i].年月 ?></button>
-        </form>
-        <div class="data-display">
-          <? if (Bfmt === "" && Cfmt === "") { ?>
-            <span class="not-entered">未入力</span>
-          <? } else { ?>
-            <div class="data-item">
-              <span class="data-label">時間外</span>
-              <span class="data-value"><?= Bfmt !== "" ? Bfmt : "未入力" ?></span>
+    <h2>📅 時間外報告 - 年月選択</h2>
+
+    <? for (var i = 0; i < 年度データ.length; i++) { ?>
+      <? var 年度 = 年度データ[i]; ?>
+      <div class="fiscal-year-section">
+        <div class="fiscal-year-header <?= 年度.editable ? '' : 'readonly' ?>"
+             onclick="toggleAccordion('year-<?= i ?>')">
+          <div style="display: flex; align-items: center;">
+            <span class="fiscal-year-title"><?= 年度.年度名 ?></span>
+            <? if (年度.isCurrentYear) { ?>
+              <span class="fiscal-year-badge">当年度</span>
+            <? } ?>
+            <? if (!年度.editable) { ?>
+              <span class="fiscal-year-badge">閲覧のみ</span>
+            <? } ?>
+          </div>
+          <span class="accordion-icon <?= 年度.isCurrentYear ? 'expanded' : '' ?>" id="icon-year-<?= i ?>">▼</span>
+        </div>
+
+        <div class="months-container <?= 年度.isCurrentYear ? 'expanded' : '' ?>" id="year-<?= i ?>">
+          <? for (var j = 0; j < 年度.months.length; j++) { ?>
+            <? var month = 年度.months[j]; ?>
+            <? var hasData = (month.時間外 !== '' || month.振替時間 !== ''); ?>
+            <? var 時間外Num = (month.時間外 !== '' && month.時間外 != null) ? Number(month.時間外) : 0; ?>
+            <? var 振替時間Num = (month.振替時間 !== '' && month.振替時間 != null) ? Number(month.振替時間) : 0; ?>
+            <? var serviceTime = 時間外Num - 振替時間Num; ?>
+
+            <div class="month-item <?= !month.editable ? 'readonly' : '' ?>">
+              <div class="month-name"><?= month.年月 ?></div>
+
+              <div class="month-data">
+                <div class="data-badge <?= hasData ? '' : 'empty' ?>">
+                  <span class="data-label">時間外</span>
+                  <span class="data-value"><?= hasData ? 時間外Num.toFixed(2) : '未入力' ?></span>
+                </div>
+                <div class="data-badge <?= hasData ? '' : 'empty' ?>">
+                  <span class="data-label">業務命令</span>
+                  <span class="data-value"><?= hasData ? 振替時間Num.toFixed(2) : '未入力' ?></span>
+                </div>
+                <div class="data-badge <?= hasData ? '' : 'empty' ?>">
+                  <span class="data-label">サービス時間</span>
+                  <span class="data-value"><strong><?= hasData ? serviceTime.toFixed(2) : '-' ?></strong></span>
+                </div>
+              </div>
+
+              <div class="month-actions">
+                <? if (month.editable) { ?>
+                  <!-- 編集ボタン -->
+                  <form action="<?= ScriptApp.getService().getUrl() ?>" method="post" style="display:inline;">
+                    <input type="hidden" name="action" value="select" />
+                    <input type="hidden" name="ログインID" value="<?= ログインID ?>" />
+                    <input type="hidden" name="年月" value="<?= month.年月 ?>" />
+                    <input type="hidden" name="時間外" value="<?= month.時間外 ?>" />
+                    <input type="hidden" name="振替時間" value="<?= month.振替時間 ?>" />
+                    <button type="submit" class="btn-edit">✏️ 編集</button>
+                  </form>
+
+                  <!-- 削除ボタン（データがある場合のみ） -->
+                  <? if (hasData) { ?>
+                    <form action="<?= ScriptApp.getService().getUrl() ?>" method="post" style="display:inline;"
+                          onsubmit="return confirm('<?= month.年月 ?> のデータを削除しますか？');">
+                      <input type="hidden" name="action" value="deleteRecord" />
+                      <input type="hidden" name="ログインID" value="<?= ログインID ?>" />
+                      <input type="hidden" name="年月" value="<?= month.年月 ?>" />
+                      <button type="submit" class="btn-delete">🗑️ 削除</button>
+                    </form>
+                  <? } ?>
+                <? } else { ?>
+                  <span class="readonly-badge">🔒 確定済み</span>
+                <? } ?>
+              </div>
             </div>
-            <div class="data-item">
-              <span class="data-label">業務命令</span>
-              <span class="data-value"><?= Cfmt !== "" ? Cfmt : "未入力" ?></span>
-            </div>
-            <div class="data-item">
-              <span class="data-label">サービス時間</span>
-              <span class="data-value"><strong><?= serviceTime.toFixed(2) ?></strong></span>
-            </div>
-            <form action="<?= ScriptApp.getService().getUrl() ?>" method="post" style="display:inline;" onsubmit="return confirm('<?= options[i].年月 ?> のデータを削除しますか？');">
-              <input type="hidden" name="action" value="deleteRecord" />
-              <input type="hidden" name="ログインID" value="<?= ログインID ?>" />
-              <input type="hidden" name="年月" value="<?= options[i].年月 ?>" />
-              <button type="submit" class="btn-delete">🗑️ 削除</button>
-            </form>
           <? } ?>
         </div>
-      </li>
-      <? } ?>
-    </ul>
+      </div>
+    <? } ?>
 
     <!-- メニューへ戻るボタン -->
     <form method="get" action="<?= ScriptApp.getService().getUrl() ?>">
       <input type="hidden" name="page" value="menu" />
       <input type="hidden" name="ログインID" value="<?= ログインID ?>" />
-      <button type="submit" class="btn-back">メニューに戻る</button>
+      <button type="submit" class="btn-back">← メニューに戻る</button>
     </form>
   </div>
+
+  <script>
+    function toggleAccordion(id) {
+      var container = document.getElementById(id);
+      var icon = document.getElementById('icon-' + id);
+
+      if (container.classList.contains('expanded')) {
+        container.classList.remove('expanded');
+        icon.classList.remove('expanded');
+      } else {
+        container.classList.add('expanded');
+        icon.classList.add('expanded');
+      }
+    }
+  </script>
 </body>
 </html>
