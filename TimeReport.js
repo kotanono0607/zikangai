@@ -113,6 +113,19 @@ function handleTimeReport(e, ss) {
   var user = e.parameter.ログインID;
   Logger.log("時間外報告 action triggered for user: " + user);
 
+  // ユーザー情報を取得（氏名を表示するため）
+  var sheetユーザー = ss.getSheetByName("ユーザー名");
+  var 氏名 = user; // デフォルトはログインID
+  if (sheetユーザー && sheetユーザー.getLastRow() >= 2) {
+    var userData = sheetユーザー.getRange(2, 1, sheetユーザー.getLastRow() - 1, 2).getValues();
+    for (var i = 0; i < userData.length; i++) {
+      if (String(userData[i][0]) === String(user)) {
+        氏名 = String(userData[i][1]);
+        break;
+      }
+    }
+  }
+
   var sheetテーブル = ss.getSheetByName("テーブル");
 
   // 年月リストを年度別に自動生成
@@ -183,6 +196,7 @@ function handleTimeReport(e, ss) {
 
   var tmpl = HtmlService.createTemplateFromFile('select');
   tmpl.ログインID = user;
+  tmpl.氏名 = 氏名;
   tmpl.年度データ = 年度配列;
   return tmpl.evaluate();
 }
@@ -243,8 +257,25 @@ function handleSendText(e, ss) {
   }
 
   // **成功メッセージ付きでメニュー画面に戻る**
+  // ユーザー情報を取得
+  var sheetユーザー = ss.getSheetByName("ユーザー名");
+  var 氏名 = 入力ID;
+  var 権限 = "";
+  if (sheetユーザー && sheetユーザー.getLastRow() >= 2) {
+    var userData = sheetユーザー.getRange(2, 1, sheetユーザー.getLastRow() - 1, 6).getValues();
+    for (var i = 0; i < userData.length; i++) {
+      if (String(userData[i][0]) === String(入力ID)) {
+        氏名 = String(userData[i][1]);
+        権限 = String(userData[i][5]);
+        break;
+      }
+    }
+  }
+
   var tmpl = HtmlService.createTemplateFromFile('メニュー');
   tmpl.ログインID = 入力ID;
+  tmpl.氏名 = 氏名;
+  tmpl.権限 = 権限;
   tmpl.successMessage = メッセージ;
   return tmpl.evaluate();
 }
@@ -293,8 +324,25 @@ function handleDeleteRecord(e, ss) {
   }
 
   // **削除結果メッセージ付きでメニュー画面に戻る**
+  // ユーザー情報を取得
+  var sheetユーザー = ss.getSheetByName("ユーザー名");
+  var 氏名 = 入力ID;
+  var 権限 = "";
+  if (sheetユーザー && sheetユーザー.getLastRow() >= 2) {
+    var userData = sheetユーザー.getRange(2, 1, sheetユーザー.getLastRow() - 1, 6).getValues();
+    for (var i = 0; i < userData.length; i++) {
+      if (String(userData[i][0]) === String(入力ID)) {
+        氏名 = String(userData[i][1]);
+        権限 = String(userData[i][5]);
+        break;
+      }
+    }
+  }
+
   var tmpl = HtmlService.createTemplateFromFile('メニュー');
   tmpl.ログインID = 入力ID;
+  tmpl.氏名 = 氏名;
+  tmpl.権限 = 権限;
   if (削除済み) {
     tmpl.successMessage = "🗑️ " + 選択年月 + " のデータを削除しました";
   } else {

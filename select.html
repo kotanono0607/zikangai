@@ -196,6 +196,9 @@
 <body>
   <div class="container">
     <h2>📅 時間外報告 - 年月選択</h2>
+    <p style="text-align: center; margin-bottom: 20px;">
+      <strong><?= typeof 氏名 !== 'undefined' ? 氏名 : ログインID ?></strong> さん
+    </p>
 
     <? for (var i = 0; i < 年度データ.length; i++) { ?>
       <? var 年度 = 年度データ[i]; ?>

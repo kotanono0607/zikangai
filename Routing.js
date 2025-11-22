@@ -90,8 +90,24 @@ function doPost(e) {
     // select アクション（年月選択→入力画面）
     case "select":
       Logger.log("select action with 年月: " + e.parameter.年月);
+
+      // ユーザー情報を取得（氏名を表示するため）
+      var ログインID = e.parameter.ログインID;
+      var 氏名 = ログインID; // デフォルトはログインID
+      var userSheet = ss.getSheetByName("ユーザー名");
+      if (userSheet && userSheet.getLastRow() >= 2) {
+        var userDataList = userSheet.getRange(2, 1, userSheet.getLastRow() - 1, 2).getValues();
+        for (var i = 0; i < userDataList.length; i++) {
+          if (String(userDataList[i][0]) === String(ログインID)) {
+            氏名 = String(userDataList[i][1]);
+            break;
+          }
+        }
+      }
+
       var selectTmpl = HtmlService.createTemplateFromFile('input');
-      selectTmpl.ログインID   = e.parameter.ログインID;
+      selectTmpl.ログインID   = ログインID;
+      selectTmpl.氏名         = 氏名;
       selectTmpl.選択年月     = e.parameter.年月;
       selectTmpl.前回時間外   = e.parameter.時間外;
       selectTmpl.前回振替時間 = e.parameter.振替時間;

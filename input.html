@@ -180,7 +180,7 @@
   <div class="container">
     <h2>入力画面</h2>
     <p>上限200時間（時間外・業務命令・サービス時間すべて）</p>
-    <p>ログインID: <?= ログインID ?></p>
+    <p><strong><?= typeof 氏名 !== 'undefined' ? 氏名 : ログインID ?></strong> さん</p>
     <? if (typeof 選択年月 !== 'undefined') { ?>
       <p>選択年月: <?= 選択年月 ?></p>
     <? } ?>
