@@ -194,11 +194,16 @@
 
     <!-- ヘッダーアクション -->
     <div class="header-actions">
-      <form action="<?= ScriptApp.getService().getUrl() ?>" method="post" style="display:inline;">
-        <input type="hidden" name="action" value="addUserForm" />
-        <input type="hidden" name="ログインID" value="<?= ログインID ?>" />
-        <button type="submit" class="btn btn-primary">➕ 新規ユーザー登録</button>
-      </form>
+      <div style="display: flex; gap: 10px;">
+        <form action="<?= ScriptApp.getService().getUrl() ?>" method="post" style="display:inline;">
+          <input type="hidden" name="action" value="addUserForm" />
+          <input type="hidden" name="ログインID" value="<?= ログインID ?>" />
+          <button type="submit" class="btn btn-primary">➕ 新規ユーザー登録</button>
+        </form>
+
+        <button type="button" class="btn btn-primary" onclick="exportCsv()">📥 CSVエクスポート</button>
+        <button type="button" class="btn btn-primary" onclick="showImportDialog()">📤 CSVインポート</button>
+      </div>
 
       <form method="get" action="<?= ScriptApp.getService().getUrl() ?>" style="display:inline;">
         <input type="hidden" name="page" value="menu" />
@@ -297,5 +302,127 @@
       </div>
     <? } ?>
   </div>
+
+  <!-- CSV インポートダイアログ -->
+  <div id="importDialog" style="display:none; position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.5); z-index:1000; display:none; justify-content:center; align-items:center;">
+    <div style="background:white; padding:30px; border-radius:12px; max-width:600px; width:90%;">
+      <h3 style="margin-top:0; color:#4CAF50;">📤 CSVインポート</h3>
+      <p style="color:#666; font-size:0.9rem; margin-bottom:20px;">
+        CSV形式: ログインID,氏名,所属１,所属２,状態,権限<br>
+        ※ヘッダー行は必須です<br>
+        ※既存IDは更新、新規IDは追加されます（削除はされません）
+      </p>
+      <div style="margin-bottom:20px;">
+        <label for="csvFile" style="display:block; margin-bottom:10px; font-weight:500;">CSVファイルを選択:</label>
+        <input type="file" id="csvFile" accept=".csv" style="width:100%; padding:10px; border:1px solid #ddd; border-radius:6px;" />
+      </div>
+      <div style="display:flex; gap:10px; justify-content:flex-end;">
+        <button class="btn btn-primary" onclick="importCsv()">インポート実行</button>
+        <button class="btn btn-secondary" onclick="hideImportDialog()">キャンセル</button>
+      </div>
+      <div id="importResult" style="margin-top:20px;"></div>
+    </div>
+  </div>
+
+  <script>
+    var ログインID = '<?= ログインID ?>';
+
+    // CSV エクスポート
+    function exportCsv() {
+      var form = document.createElement('form');
+      form.method = 'post';
+      form.action = '<?= ScriptApp.getService().getUrl() ?>';
+      form.target = '_blank';
+
+      var actionInput = document.createElement('input');
+      actionInput.type = 'hidden';
+      actionInput.name = 'action';
+      actionInput.value = 'csvExport';
+      form.appendChild(actionInput);
+
+      var idInput = document.createElement('input');
+      idInput.type = 'hidden';
+      idInput.name = 'ログインID';
+      idInput.value = ログインID;
+      form.appendChild(idInput);
+
+      document.body.appendChild(form);
+      form.submit();
+      document.body.removeChild(form);
+    }
+
+    // CSV インポートダイアログ表示
+    function showImportDialog() {
+      document.getElementById('importDialog').style.display = 'flex';
+      document.getElementById('importResult').innerHTML = '';
+      document.getElementById('csvFile').value = '';
+    }
+
+    // CSV インポートダイアログ非表示
+    function hideImportDialog() {
+      document.getElementById('importDialog').style.display = 'none';
+    }
+
+    // CSV インポート実行
+    function importCsv() {
+      var fileInput = document.getElementById('csvFile');
+      var file = fileInput.files[0];
+
+      if (!file) {
+        alert('CSVファイルを選択してください');
+        return;
+      }
+
+      var reader = new FileReader();
+      reader.onload = function(e) {
+        var csvData = e.target.result;
+
+        // BOM削除（もしあれば）
+        if (csvData.charCodeAt(0) === 0xFEFF) {
+          csvData = csvData.substring(1);
+        }
+
+        var formData = {
+          action: 'csvImport',
+          ログインID: ログインID,
+          csvData: csvData
+        };
+
+        document.getElementById('importResult').innerHTML = '<p style="color:#666;">処理中...</p>';
+
+        fetch('<?= ScriptApp.getService().getUrl() ?>', {
+          method: 'POST',
+          body: new URLSearchParams(formData)
+        })
+        .then(response => response.json())
+        .then(data => {
+          if (data.success) {
+            var resultHtml = '<div style="background:#d4edda; color:#155724; padding:15px; border-radius:6px; white-space:pre-wrap;">';
+            resultHtml += data.message;
+            resultHtml += '</div>';
+            document.getElementById('importResult').innerHTML = resultHtml;
+
+            // 3秒後にページをリロード
+            setTimeout(function() {
+              location.reload();
+            }, 3000);
+          } else {
+            var errorHtml = '<div style="background:#f8d7da; color:#721c24; padding:15px; border-radius:6px;">';
+            errorHtml += data.message;
+            errorHtml += '</div>';
+            document.getElementById('importResult').innerHTML = errorHtml;
+          }
+        })
+        .catch(error => {
+          var errorHtml = '<div style="background:#f8d7da; color:#721c24; padding:15px; border-radius:6px;">';
+          errorHtml += 'エラーが発生しました: ' + error;
+          errorHtml += '</div>';
+          document.getElementById('importResult').innerHTML = errorHtml;
+        });
+      };
+
+      reader.readAsText(file, 'UTF-8');
+    }
+  </script>
 </body>
 </html>

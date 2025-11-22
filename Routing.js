@@ -120,6 +120,23 @@ function doPost(e) {
     case "profileUpdate":
       return handleProfileUpdate(e, ss);
 
+    // 所属マスタ管理（管理者専用）
+    case "departmentMaster":
+      return handleDepartmentMaster(e, ss);
+
+    case "addDepartment":
+      return handleAddDepartment(e, ss);
+
+    case "deleteDepartment":
+      return handleDeleteDepartment(e, ss);
+
+    // CSV エクスポート/インポート（管理者専用）
+    case "csvExport":
+      return handleCsvExport(e, ss);
+
+    case "csvImport":
+      return handleCsvImport(e, ss);
+
     // それ以外はログイン画面へ
     default:
       return HtmlService.createTemplateFromFile('login').evaluate();

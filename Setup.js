@@ -17,7 +17,7 @@ function 初期セットアップ_管理者作成() {
 
   // 既に管理者ユーザーが存在するかチェック
   if (sheet.getLastRow() > 1) {
-    var data = sheet.getRange(2, 1, sheet.getLastRow() - 1, 7).getValues();
+    var data = sheet.getRange(2, 1, sheet.getLastRow() - 1, 6).getValues();
     for (var i = 0; i < data.length; i++) {
       if (String(data[i][0]) === "admin") {
         Logger.log("❌ 管理者ユーザー（admin）は既に存在します");
@@ -105,34 +105,27 @@ function テストユーザー作成() {
 }
 
 /**
- * 全ユーザーのパスワードをリセット（緊急時用）
- * ⚠️ 本番環境では使用しないでください
+ * 完全セットアップ: テストユーザー + 所属マスタ自動抽出
+ *
+ * 実行手順:
+ * 1. テストユーザー5人を作成
+ * 2. 既存ユーザーから所属マスタを自動抽出
  */
-function 全ユーザーパスワードリセット() {
-  var response = Browser.msgBox(
-    "警告",
-    "全ユーザーのパスワードを「reset123」にリセットしますか？\\n\\n⚠️ この操作は元に戻せません",
-    Browser.Buttons.YES_NO
-  );
-
-  if (response !== Browser.Buttons.YES) {
-    Logger.log("キャンセルされました");
-    return;
-  }
-
+function 完全セットアップ() {
   var ss = SpreadsheetApp.openById("1eabKd-YqMH48rX5BdhFd_MU6KWFdWHAWt2t5-Y96reA");
-  var sheet = ss.getSheetByName("ユーザー名");
-  var lastRow = sheet.getLastRow();
 
-  if (lastRow < 2) {
-    Logger.log("❌ ユーザーが存在しません");
-    return;
-  }
+  Logger.log("=== 完全セットアップ開始 ===");
+  Logger.log("");
 
-  // パスワード列（G列 = 7列目）を一括更新
-  for (var i = 2; i <= lastRow; i++) {
-    sheet.getRange(i, 7).setValue("reset123");
-  }
+  // 1. テストユーザー作成
+  Logger.log("▶ テストユーザー作成中...");
+  テストユーザー作成();
+  Logger.log("");
 
-  Logger.log("✅ " + (lastRow - 1) + "人のパスワードを「reset123」にリセットしました");
+  // 2. 所属マスタ自動抽出
+  Logger.log("▶ 所属マスタ自動抽出中...");
+  所属マスタ自動抽出(ss);
+  Logger.log("");
+
+  Logger.log("=== 完全セットアップ完了 ===");
 }

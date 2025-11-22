@@ -35,6 +35,7 @@ function handleProfileEdit(e, ss) {
 
   var tmpl = HtmlService.createTemplateFromFile('profile');
   tmpl.ログインID = ログインID;
+  tmpl.所属マスタ = get所属マスタ(ss);
   tmpl.ユーザー = ユーザー情報;
   return tmpl.evaluate();
 }

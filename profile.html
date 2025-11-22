@@ -61,7 +61,8 @@
       font-weight: 500;
       color: #555;
     }
-    .form-group input {
+    .form-group input,
+    .form-group select {
       width: 100%;
       padding: 10px;
       border: 1px solid #ddd;
@@ -69,7 +70,8 @@
       font-size: 0.95rem;
       box-sizing: border-box;
     }
-    .form-group input:focus {
+    .form-group input:focus,
+    .form-group select:focus {
       outline: none;
       border-color: #4CAF50;
     }
@@ -134,26 +136,27 @@
       <!-- 所属１ -->
       <div class="form-group">
         <label for="shozoku1">所属１</label>
-        <input
-          type="text"
-          id="shozoku1"
-          name="shozoku1"
-          value="<?= ユーザー.所属１ ?>"
-          placeholder="例: 総務課"
-          required
-        />
+        <select id="shozoku1" name="shozoku1" onchange="update所属2Options()" required>
+          <option value="">-- 選択してください --</option>
+          <? var dept1List = []; ?>
+          <? for (var d1 in 所属マスタ) { dept1List.push(d1); } ?>
+          <? dept1List.sort(); ?>
+          <? for (var i = 0; i < dept1List.length; i++) { ?>
+            <? var d1 = dept1List[i]; ?>
+            <option value="<?= d1 ?>" <?= ユーザー.所属１ === d1 ? 'selected' : '' ?>>
+              <?= d1 ?>
+            </option>
+          <? } ?>
+        </select>
+        <div class="hint">※所属1を選択すると所属2の選択肢が表示されます</div>
       </div>
 
       <!-- 所属２ -->
       <div class="form-group">
         <label for="shozoku2">所属２</label>
-        <input
-          type="text"
-          id="shozoku2"
-          name="shozoku2"
-          value="<?= ユーザー.所属２ ?>"
-          placeholder="例: 庶務係"
-        />
+        <select id="shozoku2" name="shozoku2">
+          <option value="">-- 所属1を選択してください --</option>
+        </select>
       </div>
 
       <div class="form-group">
@@ -175,12 +178,63 @@
   </div>
 
   <script>
+    // 所属マスタデータをJavaScriptオブジェクトに変換
+    var 所属マスタData = <?!= JSON.stringify(所属マスタ) ?>;
+    var 現在の所属1 = '<?= ユーザー.所属１ ?>';
+    var 現在の所属2 = '<?= ユーザー.所属２ ?>';
+
+    // ページ読み込み時に所属2を初期化
+    window.addEventListener('DOMContentLoaded', function() {
+      if (現在の所属1) {
+        update所属2Options(現在の所属2);
+      }
+    });
+
+    // 所属1が変更されたら所属2の選択肢を更新
+    function update所属2Options(selectedValue) {
+      var 所属1 = document.getElementById('shozoku1').value;
+      var 所属2Select = document.getElementById('shozoku2');
+
+      // 所属2をクリア
+      所属2Select.innerHTML = '';
+
+      if (!所属1) {
+        var defaultOption = document.createElement('option');
+        defaultOption.value = '';
+        defaultOption.textContent = '-- 所属1を選択してください --';
+        所属2Select.appendChild(defaultOption);
+        return;
+      }
+
+      // デフォルトオプション
+      var defaultOption = document.createElement('option');
+      defaultOption.value = '';
+      defaultOption.textContent = '-- 選択してください --';
+      所属2Select.appendChild(defaultOption);
+
+      // 所属1に対応する所属2のリストを取得
+      var dept2List = 所属マスタData[所属1] || [];
+
+      for (var i = 0; i < dept2List.length; i++) {
+        var option = document.createElement('option');
+        option.value = dept2List[i];
+        option.textContent = dept2List[i];
+
+        // 初期値またはパラメータで指定された値を選択
+        if (selectedValue && dept2List[i] === selectedValue) {
+          option.selected = true;
+        }
+
+        所属2Select.appendChild(option);
+      }
+    }
+
     function confirmUpdate() {
       var shozoku1 = document.getElementById('shozoku1').value.trim();
       var shozoku2 = document.getElementById('shozoku2').value.trim();
 
       if (!shozoku1) {
-        alert('所属１を入力してください');
+        alert('所属１を選択してください');
         return false;
       }
 

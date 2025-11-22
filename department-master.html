@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <base target="_top">
+  <meta charset="UTF-8">
+  <title>所属マスタ管理</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 1000px;
+      margin: 20px auto;
+      padding: 20px;
+    }
+    h2 {
+      color: #333;
+      border-bottom: 2px solid #4CAF50;
+      padding-bottom: 10px;
+    }
+    .section {
+      margin-bottom: 30px;
+      padding: 20px;
+      background: #f9f9f9;
+      border-radius: 5px;
+    }
+    .form-group {
+      margin-bottom: 15px;
+    }
+    label {
+      display: inline-block;
+      width: 100px;
+      font-weight: bold;
+    }
+    input[type="text"] {
+      width: 300px;
+      padding: 8px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 14px;
+    }
+    button {
+      padding: 10px 20px;
+      margin: 5px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+    .btn-add {
+      background-color: #4CAF50;
+      color: white;
+    }
+    .btn-add:hover {
+      background-color: #45a049;
+    }
+    .btn-delete {
+      background-color: #f44336;
+      color: white;
+      padding: 5px 10px;
+      font-size: 12px;
+    }
+    .btn-delete:hover {
+      background-color: #da190b;
+    }
+    .btn-back {
+      background-color: #999;
+      color: white;
+    }
+    .btn-back:hover {
+      background-color: #777;
+    }
+    .dept-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+      background: white;
+    }
+    .dept-table th,
+    .dept-table td {
+      border: 1px solid #ddd;
+      padding: 12px;
+      text-align: left;
+    }
+    .dept-table th {
+      background-color: #4CAF50;
+      color: white;
+      font-weight: bold;
+    }
+    .dept-table tr:hover {
+      background-color: #f5f5f5;
+    }
+    .dept-group {
+      background-color: #e8f5e9;
+      font-weight: bold;
+    }
+    .message {
+      padding: 10px;
+      margin: 10px 0;
+      border-radius: 4px;
+    }
+    .success {
+      background-color: #d4edda;
+      color: #155724;
+      border: 1px solid #c3e6cb;
+    }
+    .error {
+      background-color: #f8d7da;
+      color: #721c24;
+      border: 1px solid #f5c6cb;
+    }
+    .info {
+      background-color: #d1ecf1;
+      color: #0c5460;
+      border: 1px solid #bee5eb;
+      margin-bottom: 20px;
+    }
+  </style>
+</head>
+<body>
+  <h2>📋 所属マスタ管理</h2>
+
+  <div class="info">
+    <strong>ℹ️ 階層構造について</strong><br>
+    所属1を選択すると、それに紐づく所属2のみが表示されます。<br>
+    例：所属1「総務課」→ 所属2「庶務係」「経理係」など
+  </div>
+
+  <div id="message"></div>
+
+  <!-- 追加フォーム -->
+  <div class="section">
+    <h3>新規追加</h3>
+    <form id="addForm">
+      <div class="form-group">
+        <label for="add所属1">所属１:</label>
+        <input type="text" id="add所属1" name="所属1" required placeholder="例: 総務課">
+      </div>
+      <div class="form-group">
+        <label for="add所属2">所属２:</label>
+        <input type="text" id="add所属2" name="所属2" required placeholder="例: 庶務係">
+      </div>
+      <button type="submit" class="btn-add">➕ 追加</button>
+    </form>
+  </div>
+
+  <!-- 所属マスタ一覧 -->
+  <div class="section">
+    <h3>登録済み所属一覧</h3>
+    <table class="dept-table">
+      <thead>
+        <tr>
+          <th>所属１</th>
+          <th>所属２</th>
+          <th>操作</th>
+        </tr>
+      </thead>
+      <tbody id="deptList">
+        <? var 所属マスタData = 所属マスタ; ?>
+        <? var 所属1List = []; ?>
+        <? for (var dept1 in 所属マスタData) { 所属1List.push(dept1); } ?>
+        <? 所属1List.sort(); ?>
+
+        <? if (所属1List.length === 0) { ?>
+          <tr>
+            <td colspan="3" style="text-align: center; color: #999;">
+              登録データがありません
+            </td>
+          </tr>
+        <? } else { ?>
+          <? for (var i = 0; i < 所属1List.length; i++) { ?>
+            <? var dept1 = 所属1List[i]; ?>
+            <? var dept2List = 所属マスタData[dept1]; ?>
+            <? for (var j = 0; j < dept2List.length; j++) { ?>
+              <? var dept2 = dept2List[j]; ?>
+              <tr>
+                <? if (j === 0) { ?>
+                  <td rowspan="<?= dept2List.length ?>" class="dept-group">
+                    <?= dept1 ?>
+                  </td>
+                <? } ?>
+                <td><?= dept2 ?></td>
+                <td>
+                  <button class="btn-delete" onclick="deleteDept('<?= dept1 ?>', '<?= dept2 ?>')">
+                    🗑️ 削除
+                  </button>
+                </td>
+              </tr>
+            <? } ?>
+          <? } ?>
+        <? } ?>
+      </tbody>
+    </table>
+  </div>
+
+  <button class="btn-back" onclick="backToMenu()">⬅️ メニューに戻る</button>
+
+  <script>
+    var ログインID = '<?= ログインID ?>';
+
+    // 追加フォーム送信
+    document.getElementById('addForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+
+      var 所属1 = document.getElementById('add所属1').value.trim();
+      var 所属2 = document.getElementById('add所属2').value.trim();
+
+      if (!所属1 || !所属2) {
+        showMessage('所属1と所属2を入力してください', 'error');
+        return;
+      }
+
+      var formData = {
+        action: 'addDepartment',
+        ログインID: ログインID,
+        所属1: 所属1,
+        所属2: 所属2
+      };
+
+      fetch(location.href, {
+        method: 'POST',
+        body: new URLSearchParams(formData)
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          showMessage(data.message, 'success');
+          setTimeout(function() {
+            location.reload();
+          }, 1000);
+        } else {
+          showMessage(data.message, 'error');
+        }
+      })
+      .catch(error => {
+        showMessage('エラーが発生しました: ' + error, 'error');
+      });
+    });
+
+    // 削除
+    function deleteDept(所属1, 所属2) {
+      if (!confirm('「' + 所属1 + ' - ' + 所属2 + '」を削除しますか？')) {
+        return;
+      }
+
+      var formData = {
+        action: 'deleteDepartment',
+        ログインID: ログインID,
+        所属1: 所属1,
+        所属2: 所属2
+      };
+
+      fetch(location.href, {
+        method: 'POST',
+        body: new URLSearchParams(formData)
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          showMessage(data.message, 'success');
+          setTimeout(function() {
+            location.reload();
+          }, 1000);
+        } else {
+          showMessage(data.message, 'error');
+        }
+      })
+      .catch(error => {
+        showMessage('エラーが発生しました: ' + error, 'error');
+      });
+    }
+
+    // メッセージ表示
+    function showMessage(msg, type) {
+      var messageDiv = document.getElementById('message');
+      messageDiv.innerHTML = '<div class="message ' + type + '">' + msg + '</div>';
+      setTimeout(function() {
+        messageDiv.innerHTML = '';
+      }, 3000);
+    }
+
+    // メニューに戻る
+    function backToMenu() {
+      location.href = '?page=menu&ログインID=' + encodeURIComponent(ログインID);
+    }
+  </script>
+</body>
+</html>

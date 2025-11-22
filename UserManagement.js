@@ -144,6 +144,7 @@ function handleEditUser(e, ss) {
 
   var tmpl = HtmlService.createTemplateFromFile('edit-user');
   tmpl.ログインID = ログインID;
+  tmpl.所属マスタ = get所属マスタ(ss);
   tmpl.ユーザー = ユーザー情報;
   tmpl.isNew = false;
   return tmpl.evaluate();
@@ -167,6 +168,7 @@ function handleAddUserForm(e, ss) {
 
   var tmpl = HtmlService.createTemplateFromFile('edit-user');
   tmpl.ログインID = ログインID;
+  tmpl.所属マスタ = get所属マスタ(ss);
   tmpl.ユーザー = {
     ログインID: String(次のID),
     氏名: "",

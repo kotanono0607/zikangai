@@ -94,6 +94,14 @@
             <input class="menu-button" type="submit" value="👥 ユーザー管理" style="background-color:#FF9800;" />
           </form>
         </div>
+
+        <div class="menu-item">
+          <form action="<?= ScriptApp.getService().getUrl() ?>" method="post">
+            <input type="hidden" name="action" value="departmentMaster" />
+            <input type="hidden" name="ログインID" value="<?= ログインID ?>" />
+            <input class="menu-button" type="submit" value="📋 所属マスタ管理" style="background-color:#9C27B0;" />
+          </form>
+        </div>
       <? } ?>
 
       <!-- ▼ 以下、時間外集計ボタンを一時的にコメントアウト -->
