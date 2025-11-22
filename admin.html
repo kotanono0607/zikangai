@@ -537,7 +537,7 @@
               '<div class="alert alert-success" style="white-space:pre-wrap;">' + data.message + '</div>';
             // 3秒後にページをリロード
             setTimeout(function() {
-              location.reload();
+              reloadAdminPage();
             }, 3000);
           } else {
             document.getElementById('importResult').innerHTML =
@@ -579,6 +579,28 @@
       document.body.appendChild(form);
       form.submit();
       document.body.removeChild(form);
+    }
+
+    // ページリロード（管理画面に戻る）
+    function reloadAdminPage() {
+      var form = document.createElement('form');
+      form.method = 'post';
+      form.action = '<?= ScriptApp.getService().getUrl() ?>';
+
+      var actionInput = document.createElement('input');
+      actionInput.type = 'hidden';
+      actionInput.name = 'action';
+      actionInput.value = 'userList';
+      form.appendChild(actionInput);
+
+      var idInput = document.createElement('input');
+      idInput.type = 'hidden';
+      idInput.name = 'ログインID';
+      idInput.value = ログインID;
+      form.appendChild(idInput);
+
+      document.body.appendChild(form);
+      form.submit();
     }
   </script>
 </body>
