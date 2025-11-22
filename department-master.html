@@ -321,7 +321,24 @@
 
     // メニューに戻る
     function backToMenu() {
-      location.href = '?page=menu&ログインID=' + encodeURIComponent(ログインID);
+      var form = document.createElement('form');
+      form.method = 'get';
+      form.action = '<?= ScriptApp.getService().getUrl() ?>';
+
+      var pageInput = document.createElement('input');
+      pageInput.type = 'hidden';
+      pageInput.name = 'page';
+      pageInput.value = 'menu';
+      form.appendChild(pageInput);
+
+      var idInput = document.createElement('input');
+      idInput.type = 'hidden';
+      idInput.name = 'ログインID';
+      idInput.value = ログインID;
+      form.appendChild(idInput);
+
+      document.body.appendChild(form);
+      form.submit();
     }
   </script>
 </body>
