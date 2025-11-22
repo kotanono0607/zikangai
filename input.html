@@ -1,82 +1,268 @@
-<!-- input.html 修正版 Ver4.1.1 -->
+<!-- input.html - Bootstrap 5版 -->
 <!DOCTYPE html>
-<html>
+<html lang="ja">
 <head>
   <base target="_top">
   <meta charset="UTF-8">
-  <title>入力画面</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>時間外入力 - 時間外報告システム</title>
+
+  <!-- Bootstrap 5.3 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Bootstrap Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+
   <style>
     body {
-      font-family: Arial, sans-serif;
-      background-color: #f4f4f4;
-      margin: 0;
-      padding: 20px;
+      background: linear-gradient(135deg, #2C3E50 0%, #34495E 100%);
+      min-height: 100vh;
+      padding: 2rem 1rem;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     }
-    .container {
-      max-width: 500px;
+
+    .container-custom {
+      max-width: 700px;
       margin: 0 auto;
-      background: #fff;
-      padding: 20px;
-      border-radius: 8px;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     }
-    h2 {
-      text-align: center;
-      color: #4CAF50;
-      margin-bottom: 20px;
-    }
-    p {
-      margin: 10px 0;
-      font-size: 1rem;
+
+    .header-card {
+      background: white;
+      border-radius: 20px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+      padding: 2rem;
+      margin-bottom: 2rem;
       text-align: center;
     }
-    label {
-      display: block;
-      margin-top: 15px;
-      font-weight: bold;
+
+    .header-card h2 {
+      color: #16A085;
+      margin-bottom: 0.5rem;
+      font-weight: 600;
     }
-    .row {
+
+    .user-info {
+      font-size: 1.05rem;
+      color: #495057;
+      margin-bottom: 0.5rem;
+    }
+
+    .month-info {
+      font-size: 1.2rem;
+      color: #2C3E50;
+      font-weight: 600;
+      margin-top: 1rem;
+    }
+
+    .form-card {
+      background: white;
+      border-radius: 20px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+      padding: 2rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .section-title {
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: #2C3E50;
+      margin-bottom: 1.5rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 2px solid #e8f5f1;
       display: flex;
-      justify-content: space-between;
-      gap: 10px;
+      align-items: center;
+      gap: 0.5rem;
     }
-    select {
-      flex: 1;
-      padding: 10px;
-      border: 1px solid #ccc;
-      border-radius: 4px;
+
+    .time-input-group {
+      background: #f8f9fa;
+      border-radius: 15px;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .input-label {
       font-size: 1rem;
+      font-weight: 600;
+      color: #2C3E50;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
     }
-    input[type="submit"], input[type="button"] {
+
+    .select-row {
+      display: flex;
+      gap: 0.75rem;
+      align-items: center;
+    }
+
+    .select-wrapper {
+      flex: 1;
+      position: relative;
+    }
+
+    .select-wrapper select {
       width: 100%;
-      padding: 12px;
-      background-color: #4CAF50;
-      color: #fff;
-      border: none;
-      border-radius: 4px;
+      padding: 0.75rem;
+      border: 2px solid #d5ebe6;
+      border-radius: 10px;
       font-size: 1.1rem;
+      font-weight: 600;
+      color: #2C3E50;
+      background: white;
       cursor: pointer;
-      transition: background 0.3s;
-      margin-top: 15px;
+      transition: all 0.3s;
     }
-    input[type="button"] {
-      background-color: #888;
+
+    .select-wrapper select:focus {
+      outline: none;
+      border-color: #16A085;
+      box-shadow: 0 0 0 3px rgba(22, 160, 133, 0.1);
     }
-    input[type="submit"]:hover { background-color: #45a049; }
-    input[type="button"]:hover { background-color: #666; }
-    #serviceTime {
-      font-weight: bold;
-      font-size: 1.3em;
-      color: #000;
-      margin-top: 10px;
+
+    .select-label {
+      font-size: 0.85rem;
+      color: #7f8c8d;
+      margin-bottom: 0.5rem;
+      font-weight: 500;
+    }
+
+    .unit-text {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: #7f8c8d;
+    }
+
+    .service-time-card {
+      background: linear-gradient(135deg, #e8f5f1 0%, #d5ebe6 100%);
+      border-radius: 15px;
+      padding: 1.5rem;
       text-align: center;
+      margin-bottom: 1.5rem;
+    }
+
+    .service-time-label {
+      font-size: 0.95rem;
+      color: #16A085;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+    }
+
+    .service-time-value {
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: #16A085;
+      margin: 0.5rem 0;
+    }
+
+    .service-time-unit {
+      font-size: 1.2rem;
+      color: #16A085;
+      font-weight: 600;
+    }
+
+    .remarks-label {
+      font-size: 1rem;
+      font-weight: 600;
+      color: #2C3E50;
+      margin-bottom: 0.75rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .remarks-textarea {
+      width: 100%;
+      padding: 1rem;
+      border: 2px solid #d5ebe6;
+      border-radius: 10px;
+      font-size: 1rem;
+      resize: vertical;
+      min-height: 100px;
+      transition: all 0.3s;
+    }
+
+    .remarks-textarea:focus {
+      outline: none;
+      border-color: #16A085;
+      box-shadow: 0 0 0 3px rgba(22, 160, 133, 0.1);
+    }
+
+    .button-group {
+      display: flex;
+      gap: 1rem;
+      margin-top: 2rem;
+    }
+
+    .btn-submit, .btn-back {
+      flex: 1;
+      padding: 1rem;
+      border: none;
+      border-radius: 15px;
+      font-size: 1.1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+
+    .btn-submit {
+      background: linear-gradient(135deg, #16A085 0%, #1ABC9C 100%);
+      color: white;
+      box-shadow: 0 4px 12px rgba(22, 160, 133, 0.3);
+    }
+
+    .btn-submit:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(22, 160, 133, 0.4);
+    }
+
+    .btn-back {
+      background: linear-gradient(135deg, #95A5A6 0%, #7F8C8D 100%);
+      color: white;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    .btn-back:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+    }
+
+    .info-note {
+      background: #fff3cd;
+      border-left: 4px solid #ffc107;
+      padding: 1rem;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      color: #856404;
+      margin-bottom: 1.5rem;
+    }
+
+    @media (max-width: 576px) {
+      body {
+        padding: 1rem 0.5rem;
+      }
+
+      .header-card, .form-card {
+        padding: 1.5rem;
+      }
+
+      .button-group {
+        flex-direction: column;
+      }
+
+      .service-time-value {
+        font-size: 2rem;
+      }
     }
   </style>
+
   <script>
     /**
      * 数値を整数部と小数部に分割して返す
-     * @param {string|number} num 
-     * @returns {{整数:number, 小数:string}}
      */
     function 分割する(num){
       var v = parseFloat(num) || 0;
@@ -87,10 +273,6 @@
 
     /**
      * セレクト要素へオプションを動的生成
-     * @param {HTMLSelectElement} select 
-     * @param {number} min 
-     * @param {number} max 
-     * @param {number} step 
      */
     function オプション生成(select, min, max, step){
       for(let i = min; i <= max; i += step){
@@ -105,10 +287,6 @@
 
     /**
      * 2つの select から数値を合算し targetHidden へ格納して返す
-     * @param {string} intId 
-     * @param {string} decId 
-     * @param {string} hiddenId 
-     * @returns {number}
      */
     function 計算値(intId, decId, hiddenId){
       const iv = parseInt(document.getElementById(intId).value, 10);
@@ -144,7 +322,7 @@
       const 時間外 = document.getElementById('時間外_hidden').value;
       const 振替時間 = document.getElementById('振替時間_hidden').value;
       const 年月 = "<?= 選択年月 ?>";
-      const メッセージ = 年月 + " のデータを保存しますか？\n\n時間外: " + 時間外 + "時間\n振替時間: " + 振替時間 + "時間";
+      const メッセージ = 年月 + " のデータを保存しますか？\n\n時間外: " + 時間外 + "時間\n業務命令: " + 振替時間 + "時間";
       return confirm(メッセージ);
     }
 
@@ -177,42 +355,106 @@
   </script>
 </head>
 <body>
-  <div class="container">
-    <h2>入力画面</h2>
-    <p>上限200時間（時間外・業務命令・サービス時間すべて）</p>
-    <p><strong><?= typeof 氏名 !== 'undefined' ? 氏名 : ログインID ?></strong> さん</p>
-    <? if (typeof 選択年月 !== 'undefined') { ?>
-      <p>選択年月: <?= 選択年月 ?></p>
-    <? } ?>
+  <div class="container-custom">
+    <!-- ヘッダーカード -->
+    <div class="header-card">
+      <h2><i class="bi bi-clock-history"></i> 時間外入力</h2>
+      <p class="user-info">
+        <i class="bi bi-person-circle"></i> <strong><?= typeof 氏名 !== 'undefined' ? 氏名 : ログインID ?></strong> さん
+      </p>
+      <? if (typeof 選択年月 !== 'undefined') { ?>
+        <p class="month-info">
+          <i class="bi bi-calendar-month"></i> <?= 選択年月 ?>
+        </p>
+      <? } ?>
+    </div>
 
-    <form action="<?= ScriptApp.getService().getUrl() ?>" method="post">
-      <input type="hidden" name="action" value="sendText" />
-      <input type="hidden" name="入力ID" value="<?= ログインID ?>" />
-      <input type="hidden" name="年月" value="<?= 選択年月 ?>" />
+    <!-- 注意事項 -->
+    <div class="info-note">
+      <i class="bi bi-info-circle-fill"></i> <strong>上限200時間</strong> - 時間外・業務命令・サービス時間すべて
+    </div>
 
-      <label>時間外:</label>
-      <div class="row">
-        <select id="ot_int" aria-label="時間外 整数部"></select>
-        <select id="ot_dec" aria-label="時間外 小数部"></select>
-      </div>
-      <input type="hidden" name="時間外" id="時間外_hidden" />
+    <!-- 入力フォーム -->
+    <div class="form-card">
+      <form action="<?= ScriptApp.getService().getUrl() ?>" method="post">
+        <input type="hidden" name="action" value="sendText" />
+        <input type="hidden" name="入力ID" value="<?= ログインID ?>" />
+        <input type="hidden" name="年月" value="<?= 選択年月 ?>" />
 
-      <label>業務命令:</label>
-      <div class="row">
-        <select id="cm_int" aria-label="業務命令 整数部"></select>
-        <select id="cm_dec" aria-label="業務命令 小数部"></select>
-      </div>
-      <input type="hidden" name="振替時間" id="振替時間_hidden" />
+        <!-- 時間外入力 -->
+        <div class="time-input-group">
+          <div class="input-label">
+            <i class="bi bi-clock"></i> 時間外
+          </div>
+          <div class="select-row">
+            <div class="select-wrapper">
+              <div class="select-label">時間</div>
+              <select id="ot_int" aria-label="時間外 整数部"></select>
+            </div>
+            <span class="unit-text">時間</span>
+            <div class="select-wrapper">
+              <div class="select-label">分（15分単位）</div>
+              <select id="ot_dec" aria-label="時間外 小数部"></select>
+            </div>
+            <span class="unit-text">時間</span>
+          </div>
+          <input type="hidden" name="時間外" id="時間外_hidden" />
+        </div>
 
-      <label>サービス時間:</label>
-      <p id="serviceTime">0.00</p>
+        <!-- 業務命令入力 -->
+        <div class="time-input-group">
+          <div class="input-label">
+            <i class="bi bi-briefcase"></i> 業務命令
+          </div>
+          <div class="select-row">
+            <div class="select-wrapper">
+              <div class="select-label">時間</div>
+              <select id="cm_int" aria-label="業務命令 整数部"></select>
+            </div>
+            <span class="unit-text">時間</span>
+            <div class="select-wrapper">
+              <div class="select-label">分（15分単位）</div>
+              <select id="cm_dec" aria-label="業務命令 小数部"></select>
+            </div>
+            <span class="unit-text">時間</span>
+          </div>
+          <input type="hidden" name="振替時間" id="振替時間_hidden" />
+        </div>
 
-      <label>備考（任意）:</label>
-      <textarea name="備考" id="備考" rows="3" style="width:100%; padding:10px; border:1px solid #ccc; border-radius:4px; font-size:1rem;" placeholder="例: プロジェクトA対応、納期対応など"><?= typeof 選択年月 !== 'undefined' && typeof options !== 'undefined' ? (options.find(function(opt) { return opt.年月 === 選択年月; }) || {}).D || '' : '' ?></textarea>
+        <!-- サービス時間表示 -->
+        <div class="service-time-card">
+          <div class="service-time-label">
+            <i class="bi bi-calculator"></i> サービス時間（時間外 - 業務命令）
+          </div>
+          <div>
+            <span class="service-time-value" id="serviceTime">0.00</span>
+            <span class="service-time-unit">時間</span>
+          </div>
+        </div>
 
-      <input type="submit" value="送信" onclick="return 送信確認()" />
-      <input type="button" value="戻る" onclick="戻る()" />
-    </form>
+        <!-- 備考入力 -->
+        <div>
+          <div class="remarks-label">
+            <i class="bi bi-pencil-square"></i> 備考（任意）
+          </div>
+          <textarea
+            name="備考"
+            id="備考"
+            class="remarks-textarea"
+            placeholder="例: プロジェクトA対応、納期対応など"><?= typeof 選択年月 !== 'undefined' && typeof options !== 'undefined' ? (options.find(function(opt) { return opt.年月 === 選択年月; }) || {}).D || '' : '' ?></textarea>
+        </div>
+
+        <!-- ボタングループ -->
+        <div class="button-group">
+          <button type="button" class="btn-back" onclick="戻る()">
+            <i class="bi bi-arrow-left"></i> 戻る
+          </button>
+          <button type="submit" class="btn-submit" onclick="return 送信確認()">
+            <i class="bi bi-check-circle"></i> 保存
+          </button>
+        </div>
+      </form>
+    </div>
 
     <!-- 戻る用フォーム：時間外報告（select画面）へPOST -->
     <form id="戻るフォーム" action="<?= ScriptApp.getService().getUrl() ?>" method="post" style="display:none;">
@@ -220,5 +462,8 @@
       <input type="hidden" name="ログインID" value="<?= ログインID ?>" />
     </form>
   </div>
+
+  <!-- Bootstrap 5.3 JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
