@@ -80,6 +80,29 @@ function doPost(e) {
     case "deleteRecord":
       return handleDeleteRecord(e, ss);
 
+    // ユーザー管理（管理者専用）
+    case "userList":
+      return handleUserList(e, ss);
+
+    case "addUserForm":
+      return handleAddUserForm(e, ss);
+
+    case "editUser":
+      return handleEditUser(e, ss);
+
+    case "saveUser":
+      return handleSaveUser(e, ss);
+
+    case "retireUser":
+      return handleRetireUser(e, ss);
+
+    // 所属変更（全ユーザー）
+    case "profileEdit":
+      return handleProfileEdit(e, ss);
+
+    case "profileUpdate":
+      return handleProfileUpdate(e, ss);
+
     // それ以外はログイン画面へ
     default:
       return HtmlService.createTemplateFromFile('login').evaluate();
