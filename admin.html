@@ -443,10 +443,13 @@
 
     // CSV エクスポート
     function exportCsv() {
+      if (!confirm('ユーザーマスタをCSVファイルとしてエクスポートしますか？')) {
+        return;
+      }
+
       var form = document.createElement('form');
       form.method = 'post';
       form.action = '<?= ScriptApp.getService().getUrl() ?>';
-      form.target = '_blank';
 
       var actionInput = document.createElement('input');
       actionInput.type = 'hidden';
@@ -462,7 +465,11 @@
 
       document.body.appendChild(form);
       form.submit();
-      document.body.removeChild(form);
+
+      // フォームを少し待ってから削除
+      setTimeout(function() {
+        document.body.removeChild(form);
+      }, 100);
     }
 
     // CSV インポートダイアログ表示

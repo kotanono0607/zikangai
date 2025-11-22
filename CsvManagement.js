@@ -55,15 +55,15 @@ function handleCsvExport(e, ss) {
 
   // BOM付きUTF-8で出力（Excel対応）
   var bom = '\uFEFF';
-  var output = ContentService.createTextOutput(bom + csv);
-  output.setMimeType(ContentService.MimeType.CSV);
 
   // ファイル名に日付を含める
   var today = new Date();
   var dateStr = Utilities.formatDate(today, Session.getScriptTimeZone(), 'yyyy-MM-dd');
-  var fileName = 'ユーザーマスタ_' + dateStr + '.csv';
+  var fileName = 'user_master_' + dateStr + '.csv'; // ASCII文字のみ使用
 
-  output.downloadAsFile(fileName);
+  var output = ContentService.createTextOutput(bom + csv);
+  output.setMimeType(ContentService.MimeType.CSV);
+  output.setHeader('Content-Disposition', 'attachment; filename="' + fileName + '"');
 
   Logger.log("CSV エクスポート完了: " + data.length + "件");
 
