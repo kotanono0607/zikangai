@@ -1,332 +1,445 @@
-<!-- admin.html - ユーザー管理画面（管理者専用） -->
+<!-- admin.html - Bootstrap 5版 ユーザー管理画面（管理者専用） -->
 <!DOCTYPE html>
-<html>
+<html lang="ja">
 <head>
   <base target="_top">
-  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;600&display=swap" rel="stylesheet">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ユーザー管理 - 時間外報告システム</title>
+
+  <!-- Bootstrap 5.3 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Bootstrap Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+
   <style>
     body {
-      font-family: 'Roboto', sans-serif;
-      background: linear-gradient(135deg, #e0e0e0, #ffffff);
-      margin: 0;
-      padding: 20px;
-      color: #333;
+      background: linear-gradient(135deg, #2C3E50 0%, #34495E 100%);
+      min-height: 100vh;
+      padding: 2rem 1rem;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     }
-    .container {
-      max-width: 1200px;
+
+    .container-custom {
+      max-width: 1400px;
       margin: 0 auto;
-      background: #fff;
-      border-radius: 12px;
-      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-      padding: 30px;
     }
-    h2 {
-      color: #4CAF50;
-      margin-bottom: 20px;
-      border-bottom: 2px solid #4CAF50;
-      padding-bottom: 10px;
+
+    .header-card {
+      background: white;
+      border-radius: 20px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+      padding: 2rem;
+      margin-bottom: 2rem;
     }
-    .header-actions {
+
+    .header-card h2 {
+      color: #16A085;
+      margin-bottom: 1.5rem;
+      font-weight: 600;
       display: flex;
-      justify-content: space-between;
       align-items: center;
-      margin-bottom: 20px;
+      gap: 0.75rem;
     }
-    .search-box {
+
+    .stats-card {
+      background: linear-gradient(135deg, #e8f5f1 0%, #d5ebe6 100%);
+      border-radius: 15px;
+      padding: 1.25rem;
+      margin-bottom: 1.5rem;
+      border: 2px solid #16A085;
+    }
+
+    .stats-card strong {
+      color: #16A085;
+      font-size: 1.1rem;
+    }
+
+    .search-card {
+      background: #f8f9fa;
+      border-radius: 15px;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .action-buttons {
       display: flex;
-      gap: 10px;
+      gap: 0.75rem;
       flex-wrap: wrap;
-      margin-bottom: 20px;
+      margin-bottom: 1.5rem;
     }
-    .search-box input, .search-box select {
-      padding: 8px 12px;
-      border: 1px solid #ddd;
-      border-radius: 6px;
-      font-size: 0.9rem;
-    }
-    .search-box input[type="text"] {
-      min-width: 250px;
-      flex: 1;
-    }
-    .btn {
-      padding: 10px 20px;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-      font-size: 0.9rem;
+
+    .btn-custom {
+      border-radius: 10px;
+      padding: 0.6rem 1.25rem;
+      font-weight: 600;
       transition: all 0.3s;
-      text-decoration: none;
-      display: inline-block;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
     }
-    .btn-primary {
-      background-color: #4CAF50;
+
+    .btn-custom:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    }
+
+    .btn-teal {
+      background: linear-gradient(135deg, #16A085 0%, #1ABC9C 100%);
+      color: white;
+      border: none;
+    }
+
+    .btn-purple {
+      background: linear-gradient(135deg, #8E44AD 0%, #9B59B6 100%);
+      color: white;
+      border: none;
+    }
+
+    .btn-gray {
+      background: linear-gradient(135deg, #95A5A6 0%, #7F8C8D 100%);
+      color: white;
+      border: none;
+    }
+
+    .table-card {
+      background: white;
+      border-radius: 20px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+      margin-bottom: 2rem;
+    }
+
+    .table-custom {
+      margin-bottom: 0;
+    }
+
+    .table-custom thead {
+      background: linear-gradient(135deg, #16A085 0%, #1ABC9C 100%);
       color: white;
     }
-    .btn-primary:hover {
-      background-color: #45a049;
+
+    .table-custom thead th {
+      border: none;
+      font-weight: 600;
+      padding: 1rem;
     }
-    .btn-secondary {
-      background-color: #888;
-      color: white;
+
+    .table-custom tbody tr {
+      transition: background 0.2s;
     }
-    .btn-secondary:hover {
-      background-color: #666;
+
+    .table-custom tbody tr:hover {
+      background: #f8f9fa;
     }
-    .btn-danger {
-      background-color: #dc3545;
-      color: white;
+
+    .table-custom td {
+      padding: 1rem;
+      vertical-align: middle;
     }
-    .btn-danger:hover {
-      background-color: #c82333;
-    }
-    .btn-small {
-      padding: 6px 12px;
+
+    .badge-custom {
+      padding: 0.4rem 0.75rem;
+      border-radius: 8px;
+      font-weight: 600;
       font-size: 0.85rem;
     }
-    .user-table {
-      width: 100%;
-      border-collapse: collapse;
-      margin: 20px 0;
-    }
-    .user-table th {
-      background-color: #4CAF50;
-      color: white;
-      padding: 12px;
-      text-align: left;
-      font-weight: 500;
-    }
-    .user-table td {
-      padding: 12px;
-      border-bottom: 1px solid #ddd;
-    }
-    .user-table tr:hover {
-      background-color: #f5f5f5;
-    }
-    .badge {
-      padding: 4px 8px;
-      border-radius: 4px;
-      font-size: 0.85rem;
-      font-weight: 500;
-    }
+
     .badge-active {
-      background-color: #d4edda;
+      background: #d4edda;
       color: #155724;
     }
+
     .badge-inactive {
-      background-color: #f8d7da;
+      background: #f8d7da;
       color: #721c24;
     }
+
     .badge-admin {
-      background-color: #fff3cd;
+      background: #fff3cd;
       color: #856404;
     }
+
     .badge-normal {
-      background-color: #d1ecf1;
+      background: #d1ecf1;
       color: #0c5460;
     }
-    .pagination {
+
+    .btn-small {
+      padding: 0.4rem 0.75rem;
+      font-size: 0.85rem;
+      border-radius: 8px;
+    }
+
+    .pagination-custom {
       display: flex;
       justify-content: center;
       align-items: center;
-      gap: 10px;
-      margin-top: 20px;
-    }
-    .pagination button {
-      padding: 8px 12px;
-      border: 1px solid #ddd;
+      gap: 1rem;
+      padding: 1.5rem;
       background: white;
-      cursor: pointer;
-      border-radius: 4px;
     }
-    .pagination button:hover:not(:disabled) {
-      background-color: #f0f0f0;
-    }
-    .pagination button:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-    }
-    .pagination .current-page {
-      font-weight: 600;
-      color: #4CAF50;
-    }
+
     .no-data {
       text-align: center;
-      padding: 40px;
-      color: #888;
+      padding: 3rem;
+      color: #7f8c8d;
       font-size: 1.1rem;
     }
-    .stats {
-      background-color: #f9f9f9;
-      padding: 15px;
-      border-radius: 6px;
-      margin-bottom: 20px;
+
+    .modal-custom .modal-content {
+      border-radius: 20px;
+      border: none;
+    }
+
+    .modal-custom .modal-header {
+      background: linear-gradient(135deg, #16A085 0%, #1ABC9C 100%);
+      color: white;
+      border-radius: 20px 20px 0 0;
+    }
+
+    @media (max-width: 768px) {
+      body {
+        padding: 1rem 0.5rem;
+      }
+
+      .header-card {
+        padding: 1.5rem;
+      }
+
+      .action-buttons {
+        flex-direction: column;
+      }
+
+      .btn-custom {
+        width: 100%;
+        justify-content: center;
+      }
+
+      .table-responsive {
+        font-size: 0.85rem;
+      }
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <h2>👥 ユーザー管理</h2>
+  <div class="container-custom">
+    <div class="header-card">
+      <h2><i class="bi bi-people-fill"></i> ユーザー管理</h2>
 
-    <!-- 統計情報 -->
-    <div class="stats">
-      <strong>登録ユーザー数:</strong> <?= totalCount ?>人
-    </div>
-
-    <!-- 検索・フィルタ -->
-    <form action="<?= ScriptApp.getService().getUrl() ?>" method="post">
-      <input type="hidden" name="action" value="userList" />
-      <input type="hidden" name="ログインID" value="<?= ログインID ?>" />
-      <div class="search-box">
-        <input type="text" name="search" placeholder="🔍 氏名・ID・所属で検索..." value="<?= 検索キーワード || '' ?>" />
-        <select name="statusFilter">
-          <option value="all" <?= (状態フィルタ === 'all') ? 'selected' : '' ?>>すべての状態</option>
-          <option value="在職" <?= (状態フィルタ === '在職') ? 'selected' : '' ?>>在職</option>
-          <option value="退職" <?= (状態フィルタ === '退職') ? 'selected' : '' ?>>退職</option>
-        </select>
-        <select name="roleFilter">
-          <option value="all" <?= (権限フィルタ === 'all') ? 'selected' : '' ?>>すべての権限</option>
-          <option value="管理者" <?= (権限フィルタ === '管理者') ? 'selected' : '' ?>>管理者</option>
-          <option value="一般" <?= (権限フィルタ === '一般') ? 'selected' : '' ?>>一般</option>
-        </select>
-        <button type="submit" class="btn btn-primary">検索</button>
+      <!-- 統計情報 -->
+      <div class="stats-card">
+        <i class="bi bi-graph-up"></i> <strong>登録ユーザー数:</strong> <?= totalCount ?>人
       </div>
-    </form>
 
-    <!-- ヘッダーアクション -->
-    <div class="header-actions">
-      <div style="display: flex; gap: 10px;">
+      <!-- 検索・フィルタ -->
+      <form action="<?= ScriptApp.getService().getUrl() ?>" method="post">
+        <input type="hidden" name="action" value="userList" />
+        <input type="hidden" name="ログインID" value="<?= ログインID ?>" />
+        <div class="search-card">
+          <div class="row g-3">
+            <div class="col-md-5">
+              <input type="text" name="search" class="form-control" placeholder="🔍 氏名・ID・所属で検索..." value="<?= 検索キーワード || '' ?>" />
+            </div>
+            <div class="col-md-3">
+              <select name="statusFilter" class="form-select">
+                <option value="all" <?= (状態フィルタ === 'all') ? 'selected' : '' ?>>すべての状態</option>
+                <option value="在職" <?= (状態フィルタ === '在職') ? 'selected' : '' ?>>在職</option>
+                <option value="退職" <?= (状態フィルタ === '退職') ? 'selected' : '' ?>>退職</option>
+              </select>
+            </div>
+            <div class="col-md-2">
+              <select name="roleFilter" class="form-select">
+                <option value="all" <?= (権限フィルタ === 'all') ? 'selected' : '' ?>>すべての権限</option>
+                <option value="管理者" <?= (権限フィルタ === '管理者') ? 'selected' : '' ?>>管理者</option>
+                <option value="一般" <?= (権限フィルタ === '一般') ? 'selected' : '' ?>>一般</option>
+              </select>
+            </div>
+            <div class="col-md-2">
+              <button type="submit" class="btn btn-teal btn-custom w-100">
+                <i class="bi bi-search"></i> 検索
+              </button>
+            </div>
+          </div>
+        </div>
+      </form>
+
+      <!-- アクションボタン -->
+      <div class="action-buttons">
         <form action="<?= ScriptApp.getService().getUrl() ?>" method="post" style="display:inline;">
           <input type="hidden" name="action" value="addUserForm" />
           <input type="hidden" name="ログインID" value="<?= ログインID ?>" />
-          <button type="submit" class="btn btn-primary">➕ 新規ユーザー登録</button>
+          <button type="submit" class="btn btn-teal btn-custom">
+            <i class="bi bi-person-plus-fill"></i> 新規ユーザー登録
+          </button>
         </form>
 
-        <button type="button" class="btn btn-primary" onclick="exportCsv()">📥 CSVエクスポート</button>
-        <button type="button" class="btn btn-primary" onclick="showImportDialog()">📤 CSVインポート</button>
-        <button type="button" class="btn btn-primary" onclick="generateQrPdf()" style="background-color:#9C27B0;">📱 QRカード一括生成</button>
-      </div>
+        <button type="button" class="btn btn-teal btn-custom" onclick="exportCsv()">
+          <i class="bi bi-download"></i> CSVエクスポート
+        </button>
 
-      <form method="get" action="<?= ScriptApp.getService().getUrl() ?>" style="display:inline;">
-        <input type="hidden" name="page" value="menu" />
-        <input type="hidden" name="ログインID" value="<?= ログインID ?>" />
-        <button type="submit" class="btn btn-secondary">← メニューに戻る</button>
-      </form>
+        <button type="button" class="btn btn-teal btn-custom" onclick="showImportDialog()">
+          <i class="bi bi-upload"></i> CSVインポート
+        </button>
+
+        <button type="button" class="btn btn-purple btn-custom" onclick="generateQrPdf()">
+          <i class="bi bi-qr-code"></i> QRカード一括生成
+        </button>
+
+        <form method="get" action="<?= ScriptApp.getService().getUrl() ?>" style="display:inline; margin-left: auto;">
+          <input type="hidden" name="page" value="menu" />
+          <input type="hidden" name="ログインID" value="<?= ログインID ?>" />
+          <button type="submit" class="btn btn-gray btn-custom">
+            <i class="bi bi-house-fill"></i> メニューに戻る
+          </button>
+        </form>
+      </div>
     </div>
 
     <!-- ユーザー一覧テーブル -->
     <? if (users && users.length > 0) { ?>
-      <table class="user-table">
-        <thead>
-          <tr>
-            <th>ログインID</th>
-            <th>氏名</th>
-            <th>所属１</th>
-            <th>所属２</th>
-            <th>状態</th>
-            <th>権限</th>
-            <th>操作</th>
-          </tr>
-        </thead>
-        <tbody>
-          <? for (var i = 0; i < users.length; i++) { ?>
-            <? var user = users[i]; ?>
-            <tr>
-              <td><?= user.ログインID ?></td>
-              <td><?= user.氏名 ?></td>
-              <td><?= user.所属１ ?></td>
-              <td><?= user.所属２ ?></td>
-              <td>
-                <span class="badge <?= user.状態 === '在職' ? 'badge-active' : 'badge-inactive' ?>">
-                  <?= user.状態 ?>
-                </span>
-              </td>
-              <td>
-                <span class="badge <?= user.権限 === '管理者' ? 'badge-admin' : 'badge-normal' ?>">
-                  <?= user.権限 ?>
-                </span>
-              </td>
-              <td>
-                <form action="<?= ScriptApp.getService().getUrl() ?>" method="post" style="display:inline;">
-                  <input type="hidden" name="action" value="editUser" />
-                  <input type="hidden" name="ログインID" value="<?= ログインID ?>" />
-                  <input type="hidden" name="editUserId" value="<?= user.ログインID ?>" />
-                  <button type="submit" class="btn btn-primary btn-small">✏️ 編集</button>
-                </form>
+      <div class="table-card">
+        <div class="table-responsive">
+          <table class="table table-hover table-custom">
+            <thead>
+              <tr>
+                <th>ログインID</th>
+                <th>氏名</th>
+                <th>所属１</th>
+                <th>所属２</th>
+                <th>状態</th>
+                <th>権限</th>
+                <th style="text-align: center;">操作</th>
+              </tr>
+            </thead>
+            <tbody>
+              <? for (var i = 0; i < users.length; i++) { ?>
+                <? var user = users[i]; ?>
+                <tr>
+                  <td><strong><?= user.ログインID ?></strong></td>
+                  <td><?= user.氏名 ?></td>
+                  <td><?= user.所属１ ?></td>
+                  <td><?= user.所属２ ?></td>
+                  <td>
+                    <span class="badge badge-custom <?= user.状態 === '在職' ? 'badge-active' : 'badge-inactive' ?>">
+                      <?= user.状態 === '在職' ? '✓ 在職' : '✗ 退職' ?>
+                    </span>
+                  </td>
+                  <td>
+                    <span class="badge badge-custom <?= user.権限 === '管理者' ? 'badge-admin' : 'badge-normal' ?>">
+                      <?= user.権限 === '管理者' ? '👑 管理者' : '👤 一般' ?>
+                    </span>
+                  </td>
+                  <td style="text-align: center;">
+                    <form action="<?= ScriptApp.getService().getUrl() ?>" method="post" style="display:inline;">
+                      <input type="hidden" name="action" value="editUser" />
+                      <input type="hidden" name="ログインID" value="<?= ログインID ?>" />
+                      <input type="hidden" name="editUserId" value="<?= user.ログインID ?>" />
+                      <button type="submit" class="btn btn-teal btn-small">
+                        <i class="bi bi-pencil-fill"></i> 編集
+                      </button>
+                    </form>
 
-                <? if (user.状態 === '在職' && user.ログインID !== ログインID) { ?>
-                  <form action="<?= ScriptApp.getService().getUrl() ?>" method="post" style="display:inline;"
-                        onsubmit="return confirm('<?= user.氏名 ?>（<?= user.ログインID ?>）を退職処理しますか？\n\n※ログインできなくなります');">
-                    <input type="hidden" name="action" value="retireUser" />
-                    <input type="hidden" name="ログインID" value="<?= ログインID ?>" />
-                    <input type="hidden" name="retireUserId" value="<?= user.ログインID ?>" />
-                    <button type="submit" class="btn btn-danger btn-small">🚫 退職処理</button>
-                  </form>
-                <? } ?>
-              </td>
-            </tr>
-          <? } ?>
-        </tbody>
-      </table>
-
-      <!-- ページネーション -->
-      <? if (totalPages > 1) { ?>
-        <div class="pagination">
-          <form action="<?= ScriptApp.getService().getUrl() ?>" method="post" style="display:inline;">
-            <input type="hidden" name="action" value="userList" />
-            <input type="hidden" name="ログインID" value="<?= ログインID ?>" />
-            <input type="hidden" name="page" value="<?= Math.max(1, currentPage - 1) ?>" />
-            <input type="hidden" name="search" value="<?= 検索キーワード || '' ?>" />
-            <input type="hidden" name="statusFilter" value="<?= 状態フィルタ || 'all' ?>" />
-            <input type="hidden" name="roleFilter" value="<?= 権限フィルタ || 'all' ?>" />
-            <button type="submit" <?= currentPage === 1 ? 'disabled' : '' ?>>◀ 前へ</button>
-          </form>
-
-          <span class="current-page">
-            <?= currentPage ?> / <?= totalPages ?>
-          </span>
-
-          <form action="<?= ScriptApp.getService().getUrl() ?>" method="post" style="display:inline;">
-            <input type="hidden" name="action" value="userList" />
-            <input type="hidden" name="ログインID" value="<?= ログインID ?>" />
-            <input type="hidden" name="page" value="<?= Math.min(totalPages, currentPage + 1) ?>" />
-            <input type="hidden" name="search" value="<?= 検索キーワード || '' ?>" />
-            <input type="hidden" name="statusFilter" value="<?= 状態フィルタ || 'all' ?>" />
-            <input type="hidden" name="roleFilter" value="<?= 権限フィルタ || 'all' ?>" />
-            <button type="submit" <?= currentPage === totalPages ? 'disabled' : '' ?>>次へ ▶</button>
-          </form>
+                    <? if (user.状態 === '在職' && user.ログインID !== ログインID) { ?>
+                      <form action="<?= ScriptApp.getService().getUrl() ?>" method="post" style="display:inline;"
+                            onsubmit="return confirm('<?= user.氏名 ?>（<?= user.ログインID ?>）を退職処理しますか？\n\n※ログインできなくなります');">
+                        <input type="hidden" name="action" value="retireUser" />
+                        <input type="hidden" name="ログインID" value="<?= ログインID ?>" />
+                        <input type="hidden" name="retireUserId" value="<?= user.ログインID ?>" />
+                        <button type="submit" class="btn btn-danger btn-small">
+                          <i class="bi bi-x-circle-fill"></i> 退職
+                        </button>
+                      </form>
+                    <? } ?>
+                  </td>
+                </tr>
+              <? } ?>
+            </tbody>
+          </table>
         </div>
-      <? } ?>
+
+        <!-- ページネーション -->
+        <? if (totalPages > 1) { ?>
+          <div class="pagination-custom">
+            <form action="<?= ScriptApp.getService().getUrl() ?>" method="post" style="display:inline;">
+              <input type="hidden" name="action" value="userList" />
+              <input type="hidden" name="ログインID" value="<?= ログインID ?>" />
+              <input type="hidden" name="page" value="<?= Math.max(1, currentPage - 1) ?>" />
+              <input type="hidden" name="search" value="<?= 検索キーワード || '' ?>" />
+              <input type="hidden" name="statusFilter" value="<?= 状態フィルタ || 'all' ?>" />
+              <input type="hidden" name="roleFilter" value="<?= 権限フィルタ || 'all' ?>" />
+              <button type="submit" class="btn btn-teal btn-custom btn-small" <?= currentPage === 1 ? 'disabled' : '' ?>>
+                <i class="bi bi-chevron-left"></i> 前へ
+              </button>
+            </form>
+
+            <span style="font-weight: 600; color: #16A085; font-size: 1.1rem;">
+              <?= currentPage ?> / <?= totalPages ?>
+            </span>
+
+            <form action="<?= ScriptApp.getService().getUrl() ?>" method="post" style="display:inline;">
+              <input type="hidden" name="action" value="userList" />
+              <input type="hidden" name="ログインID" value="<?= ログインID ?>" />
+              <input type="hidden" name="page" value="<?= Math.min(totalPages, currentPage + 1) ?>" />
+              <input type="hidden" name="search" value="<?= 検索キーワード || '' ?>" />
+              <input type="hidden" name="statusFilter" value="<?= 状態フィルタ || 'all' ?>" />
+              <input type="hidden" name="roleFilter" value="<?= 権限フィルタ || 'all' ?>" />
+              <button type="submit" class="btn btn-teal btn-custom btn-small" <?= currentPage === totalPages ? 'disabled' : '' ?>>
+                次へ <i class="bi bi-chevron-right"></i>
+              </button>
+            </form>
+          </div>
+        <? } ?>
+      </div>
 
     <? } else { ?>
-      <div class="no-data">
-        📋 該当するユーザーが見つかりません
+      <div class="table-card">
+        <div class="no-data">
+          <i class="bi bi-inbox" style="font-size: 3rem; color: #bdc3c7; margin-bottom: 1rem;"></i><br>
+          該当するユーザーが見つかりません
+        </div>
       </div>
     <? } ?>
   </div>
 
-  <!-- CSV インポートダイアログ -->
-  <div id="importDialog" style="display:none; position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.5); z-index:1000; display:none; justify-content:center; align-items:center;">
-    <div style="background:white; padding:30px; border-radius:12px; max-width:600px; width:90%;">
-      <h3 style="margin-top:0; color:#4CAF50;">📤 CSVインポート</h3>
-      <p style="color:#666; font-size:0.9rem; margin-bottom:20px;">
-        CSV形式: ログインID,氏名,所属１,所属２,状態,権限<br>
-        ※ヘッダー行は必須です<br>
-        ※既存IDは更新、新規IDは追加されます（削除はされません）
-      </p>
-      <div style="margin-bottom:20px;">
-        <label for="csvFile" style="display:block; margin-bottom:10px; font-weight:500;">CSVファイルを選択:</label>
-        <input type="file" id="csvFile" accept=".csv" style="width:100%; padding:10px; border:1px solid #ddd; border-radius:6px;" />
+  <!-- CSV インポートモーダル -->
+  <div class="modal fade modal-custom" id="importModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title"><i class="bi bi-upload"></i> CSVインポート</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <p style="color:#666; font-size:0.9rem; margin-bottom:20px;">
+            <strong>CSV形式:</strong> ログインID,氏名,所属１,所属２,状態,権限<br>
+            ※ヘッダー行は必須です<br>
+            ※既存IDは更新、新規IDは追加されます（削除はされません）
+          </p>
+          <div class="mb-3">
+            <label for="csvFile" class="form-label"><strong>CSVファイルを選択:</strong></label>
+            <input type="file" class="form-control" id="csvFile" accept=".csv" />
+          </div>
+          <div id="importResult"></div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-teal btn-custom" onclick="importCsv()">
+            <i class="bi bi-check-circle"></i> インポート実行
+          </button>
+          <button type="button" class="btn btn-gray btn-custom" data-bs-dismiss="modal">
+            キャンセル
+          </button>
+        </div>
       </div>
-      <div style="display:flex; gap:10px; justify-content:flex-end;">
-        <button class="btn btn-primary" onclick="importCsv()">インポート実行</button>
-        <button class="btn btn-secondary" onclick="hideImportDialog()">キャンセル</button>
-      </div>
-      <div id="importResult" style="margin-top:20px;"></div>
     </div>
   </div>
 
+  <!-- Bootstrap 5.3 JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
   <script>
     var ログインID = '<?= ログインID ?>';
+    var importModal = new bootstrap.Modal(document.getElementById('importModal'));
 
     // CSV エクスポート
     function exportCsv() {
@@ -354,14 +467,9 @@
 
     // CSV インポートダイアログ表示
     function showImportDialog() {
-      document.getElementById('importDialog').style.display = 'flex';
       document.getElementById('importResult').innerHTML = '';
       document.getElementById('csvFile').value = '';
-    }
-
-    // CSV インポートダイアログ非表示
-    function hideImportDialog() {
-      document.getElementById('importDialog').style.display = 'none';
+      importModal.show();
     }
 
     // CSV インポート実行
@@ -389,7 +497,7 @@
           csvData: csvData
         };
 
-        document.getElementById('importResult').innerHTML = '<p style="color:#666;">処理中...</p>';
+        document.getElementById('importResult').innerHTML = '<div class="alert alert-info">処理中...</div>';
 
         fetch('<?= ScriptApp.getService().getUrl() ?>', {
           method: 'POST',
@@ -398,27 +506,20 @@
         .then(response => response.json())
         .then(data => {
           if (data.success) {
-            var resultHtml = '<div style="background:#d4edda; color:#155724; padding:15px; border-radius:6px; white-space:pre-wrap;">';
-            resultHtml += data.message;
-            resultHtml += '</div>';
-            document.getElementById('importResult').innerHTML = resultHtml;
-
+            document.getElementById('importResult').innerHTML =
+              '<div class="alert alert-success" style="white-space:pre-wrap;">' + data.message + '</div>';
             // 3秒後にページをリロード
             setTimeout(function() {
               location.reload();
             }, 3000);
           } else {
-            var errorHtml = '<div style="background:#f8d7da; color:#721c24; padding:15px; border-radius:6px;">';
-            errorHtml += data.message;
-            errorHtml += '</div>';
-            document.getElementById('importResult').innerHTML = errorHtml;
+            document.getElementById('importResult').innerHTML =
+              '<div class="alert alert-danger">' + data.message + '</div>';
           }
         })
         .catch(error => {
-          var errorHtml = '<div style="background:#f8d7da; color:#721c24; padding:15px; border-radius:6px;">';
-          errorHtml += 'エラーが発生しました: ' + error;
-          errorHtml += '</div>';
-          document.getElementById('importResult').innerHTML = errorHtml;
+          document.getElementById('importResult').innerHTML =
+            '<div class="alert alert-danger">エラーが発生しました: ' + error + '</div>';
         });
       };
 
@@ -434,7 +535,7 @@
       var form = document.createElement('form');
       form.method = 'post';
       form.action = '<?= ScriptApp.getService().getUrl() ?>';
-      form.target = '_blank'; // 新しいウィンドウで開く
+      form.target = '_blank';
 
       var actionInput = document.createElement('input');
       actionInput.type = 'hidden';
