@@ -11,6 +11,9 @@ function is年月編集可能(年月文字列) {
   var currentFiscalYear = (currentMonth >= 4) ? currentYear : currentYear - 1;
   var is猶予期間 = (currentMonth >= 4 && currentMonth <= 5);
 
+  // 開始年度（固定：2024年度）
+  var START_FISCAL_YEAR = 2024;
+
   // 年月文字列から年と月を抽出（例: "2025年11月" → 2025, 11）
   var match = 年月文字列.match(/(\d{4})年(\d{1,2})月/);
   if (!match) return false;
@@ -20,6 +23,11 @@ function is年月編集可能(年月文字列) {
 
   // 対象年月の年度を判定
   var targetFiscalYear = (targetMonth >= 4) ? targetYear : targetYear - 1;
+
+  // 2024年度より前は編集不可
+  if (targetFiscalYear < START_FISCAL_YEAR) {
+    return false;
+  }
 
   // 年度オフセットを計算
   var fiscalYearOffset = targetFiscalYear - currentFiscalYear;
@@ -39,7 +47,7 @@ function is年月編集可能(年月文字列) {
 
 /**
  * 年月リストを自動生成（年度ベース：4月〜3月）
- * 過去2年度 + 当年度 = 合計3年度分（36ヶ月）を生成
+ * 2024年度から当年度まで（最大10年度分）を生成
  * 各年月に編集可能フラグと年度情報を付与
  */
 function 年月リスト自動生成() {
@@ -53,23 +61,26 @@ function 年月リスト自動生成() {
   // 5月末までは前年度も編集可能
   var is猶予期間 = (currentMonth >= 4 && currentMonth <= 5);
 
+  // 開始年度（固定：2024年度）
+  var START_FISCAL_YEAR = 2024;
+
   var 年度別データ = {};
 
-  // 過去2年度 + 当年度 = 3年度分を生成
-  for (var fiscalYearOffset = -2; fiscalYearOffset <= 0; fiscalYearOffset++) {
-    var fiscalYear = currentFiscalYear + fiscalYearOffset;
+  // 2024年度から当年度までを生成（最大10年度）
+  var startYear = Math.max(START_FISCAL_YEAR, currentFiscalYear - 9); // 10年以上前は表示しない
+  for (var fiscalYear = startYear; fiscalYear <= currentFiscalYear; fiscalYear++) {
     var 年度名 = fiscalYear + "年度";
 
     // 編集可否を判定
     var editable = false;
-    if (fiscalYearOffset === 0) {
+    if (fiscalYear === currentFiscalYear) {
       // 当年度：常に編集可能
       editable = true;
-    } else if (fiscalYearOffset === -1 && is猶予期間) {
+    } else if (fiscalYear === currentFiscalYear - 1 && is猶予期間) {
       // 前年度：4月〜5月のみ編集可能
       editable = true;
     }
-    // fiscalYearOffset === -2（前々年度）: editable = false
+    // それ以外：閲覧のみ
 
     年度別データ[年度名] = {
       fiscalYear: fiscalYear,
