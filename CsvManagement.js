@@ -73,10 +73,10 @@ function handleCsvExport(e, ss) {
  * IDで照合し、存在すれば更新、なければ新規追加
  */
 function handleCsvImport(e, ss) {
-  var ログインID = e.parameter.ログインID;
+  var adminログインID = e.parameter.ログインID;
 
   // 管理者チェック
-  if (!isAdmin(ログインID, ss)) {
+  if (!isAdmin(adminログインID, ss)) {
     return ContentService.createTextOutput(JSON.stringify({
       success: false,
       message: "アクセス権限がありません"
@@ -140,15 +140,19 @@ function handleCsvImport(e, ss) {
   var errorCount = 0;
   var errors = [];
 
+  Logger.log("CSVインポート開始: " + (lines.length - 1) + "行のデータ");
+
   // データ行を処理
   for (var i = 1; i < lines.length; i++) {
     var line = lines[i].trim();
 
     if (!line) {
+      Logger.log("行" + (i + 1) + ": 空行をスキップ");
       continue; // 空行スキップ
     }
 
     var cells = parseCsvLine(line);
+    Logger.log("行" + (i + 1) + ": パース結果 = " + cells.length + "列");
 
     if (cells.length !== 6) {
       errorCount++;
@@ -186,14 +190,19 @@ function handleCsvImport(e, ss) {
     if (existingUsers[ログインID]) {
       // 更新
       var rowIndex = existingUsers[ログインID];
+      Logger.log("ユーザー更新: " + ログインID + " (行" + rowIndex + ")");
       sheet.getRange(rowIndex, 1, 1, 6).setValues([[ログインID, 氏名, 所属１, 所属２, 状態, 権限]]);
       updatedCount++;
     } else {
       // 新規追加
+      Logger.log("新規ユーザー追加: " + ログインID);
       sheet.appendRow([ログインID, 氏名, 所属１, 所属２, 状態, 権限]);
       addedCount++;
     }
   }
+
+  // スプレッドシートの変更を確実に保存
+  SpreadsheetApp.flush();
 
   var message = "インポート完了\n";
   message += "新規追加: " + addedCount + "件\n";
