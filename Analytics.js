@@ -45,9 +45,10 @@ function handleAnalytics(e, ss) {
 
 /**
  * 個人の月別時間外データを取得（年度ベース）
+ * 一時的に年度フィルターを無効化してデバッグ中
  */
 function getMyMonthlyData(ログインID, 年度) {
-  Logger.log("getMyMonthlyData called: ログインID=" + ログインID + ", 年度=" + 年度);
+  Logger.log("getMyMonthlyData called: ログインID=" + ログインID + ", 年度=" + 年度 + " (年度フィルター無効化中)");
 
   var ss = SpreadsheetApp.openById("1eabKd-YqMH48rX5BdhFd_MU6KWFdWHAWt2t5-Y96reA");
   var sheet = ss.getSheetByName("テーブル");
@@ -97,14 +98,18 @@ function getMyMonthlyData(ログインID, 年度) {
     allUserData.push(年月);
 
     // 年度に属するかチェック（4月〜翌年3月）
-    var inFiscalYear = false;
-    if (month >= 4 && year === startYear) {
-      inFiscalYear = true;
-    } else if (month <= 3 && year === endYear) {
-      inFiscalYear = true;
-    }
+    // 🔧 デバッグ用：年度フィルターを一時的に無効化
+    var inFiscalYear = true; // 全データを返す（デバッグ用）
 
-    Logger.log("年月=" + 年月 + ", year=" + year + ", month=" + month + ", 年度判定=" + inFiscalYear);
+    // 元のロジック（デバッグ後に復元）
+    // var inFiscalYear = false;
+    // if (month >= 4 && year === startYear) {
+    //   inFiscalYear = true;
+    // } else if (month <= 3 && year === endYear) {
+    //   inFiscalYear = true;
+    // }
+
+    Logger.log("年月=" + 年月 + ", year=" + year + ", month=" + month + ", 年度判定=" + inFiscalYear + " (フィルター無効化中)");
 
     if (inFiscalYear) {
       Logger.log("データ追加: " + 年月 + " (時間外=" + 時間外 + ", 振替=" + 振替時間 + ")");
