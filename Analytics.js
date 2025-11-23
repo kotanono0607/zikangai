@@ -47,31 +47,47 @@ function handleAnalytics(e, ss) {
  * 個人の月別時間外データを取得（年度ベース）
  */
 function getMyMonthlyData(ログインID, 年度) {
+  Logger.log("getMyMonthlyData called: ログインID=" + ログインID + ", 年度=" + 年度);
+
   var ss = SpreadsheetApp.openById("1eabKd-YqMH48rX5BdhFd_MU6KWFdWHAWt2t5-Y96reA");
   var sheet = ss.getSheetByName("テーブル");
 
-  if (sheet.getLastRow() < 2) {
+  if (!sheet || sheet.getLastRow() < 2) {
+    Logger.log("データなし: シートが空またはヘッダーのみ");
     return [];
   }
 
   var data = sheet.getRange(2, 1, sheet.getLastRow() - 1, 5).getValues();
+  Logger.log("取得行数: " + data.length);
+
   var monthlyData = [];
 
   // 年度の開始年と終了年を計算
   var startYear = parseInt(年度);
   var endYear = startYear + 1;
 
+  Logger.log("対象年度: " + startYear + "年度 (期間: " + startYear + "年4月〜" + endYear + "年3月)");
+
   for (var i = 0; i < data.length; i++) {
     var 年月 = String(data[i][0]);
-    var userID = String(data[i][1]);
+    var userID = String(data[i][1]).trim();
     var 時間外 = parseFloat(data[i][2]) || 0;
     var 振替時間 = parseFloat(data[i][3]) || 0;
 
-    if (userID !== String(ログインID)) continue;
+    // ログインIDの照合（デバッグ用に最初の数件だけログ出力）
+    if (i < 5) {
+      Logger.log("行" + (i+2) + ": 年月=" + 年月 + ", userID=" + userID + ", ログインID=" + ログインID + ", 一致=" + (userID === String(ログインID)));
+    }
+
+    // ユーザーIDが一致しない場合はスキップ
+    if (userID !== String(ログインID).trim()) continue;
 
     // 年月から年と月を抽出
     var match = 年月.match(/(\d{4})年(\d{1,2})月/);
-    if (!match) continue;
+    if (!match) {
+      Logger.log("年月フォーマットエラー: " + 年月);
+      continue;
+    }
 
     var year = parseInt(match[1]);
     var month = parseInt(match[2]);
@@ -85,6 +101,7 @@ function getMyMonthlyData(ログインID, 年度) {
     }
 
     if (inFiscalYear) {
+      Logger.log("データ追加: " + 年月 + " (時間外=" + 時間外 + ", 振替=" + 振替時間 + ")");
       monthlyData.push({
         年月: 年月,
         時間外: 時間外,
@@ -95,6 +112,8 @@ function getMyMonthlyData(ログインID, 年度) {
       });
     }
   }
+
+  Logger.log("最終データ件数: " + monthlyData.length);
 
   // 月順にソート（4月から順番に）
   monthlyData.sort(function(a, b) {
