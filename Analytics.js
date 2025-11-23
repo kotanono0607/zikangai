@@ -61,6 +61,7 @@ function getMyMonthlyData(ログインID, 年度) {
   Logger.log("取得行数: " + data.length);
 
   var monthlyData = [];
+  var allUserData = []; // デバッグ用：このユーザーの全データ
 
   // 年度の開始年と終了年を計算
   var startYear = parseInt(年度);
@@ -75,8 +76,8 @@ function getMyMonthlyData(ログインID, 年度) {
     var 振替時間 = parseFloat(data[i][3]) || 0;
 
     // ログインIDの照合（デバッグ用に最初の数件だけログ出力）
-    if (i < 5) {
-      Logger.log("行" + (i+2) + ": 年月=" + 年月 + ", userID=" + userID + ", ログインID=" + ログインID + ", 一致=" + (userID === String(ログインID)));
+    if (i < 10) {
+      Logger.log("行" + (i+2) + ": 年月=" + 年月 + ", userID=[" + userID + "], ログインID=[" + ログインID + "], 一致=" + (userID === String(ログインID).trim()));
     }
 
     // ユーザーIDが一致しない場合はスキップ
@@ -92,6 +93,9 @@ function getMyMonthlyData(ログインID, 年度) {
     var year = parseInt(match[1]);
     var month = parseInt(match[2]);
 
+    // このユーザーの全データを記録（デバッグ用）
+    allUserData.push(年月);
+
     // 年度に属するかチェック（4月〜翌年3月）
     var inFiscalYear = false;
     if (month >= 4 && year === startYear) {
@@ -99,6 +103,8 @@ function getMyMonthlyData(ログインID, 年度) {
     } else if (month <= 3 && year === endYear) {
       inFiscalYear = true;
     }
+
+    Logger.log("年月=" + 年月 + ", year=" + year + ", month=" + month + ", 年度判定=" + inFiscalYear);
 
     if (inFiscalYear) {
       Logger.log("データ追加: " + 年月 + " (時間外=" + 時間外 + ", 振替=" + 振替時間 + ")");
@@ -110,9 +116,12 @@ function getMyMonthlyData(ログインID, 年度) {
         year: year,
         month: month
       });
+    } else {
+      Logger.log("データ除外: " + 年月 + " (年度=" + startYear + "に該当せず)");
     }
   }
 
+  Logger.log("このユーザーの全データ: " + allUserData.join(", "));
   Logger.log("最終データ件数: " + monthlyData.length);
 
   // 月順にソート（4月から順番に）
