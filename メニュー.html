@@ -193,6 +193,19 @@
           </div>
         </button>
       </form>
+
+      <!-- 分析・レポート -->
+      <form action="<?= ScriptApp.getService().getUrl() ?>" method="post">
+        <input type="hidden" name="action" value="analytics" />
+        <input type="hidden" name="ログインID" value="<?= ログインID ?>" />
+        <button type="submit" class="menu-btn btn-info-custom" style="background: linear-gradient(135deg, #16A085 0%, #1ABC9C 100%);">
+          <i class="bi bi-graph-up-arrow"></i>
+          <div>
+            <div>分析・レポート</div>
+            <small style="opacity: 0.8; font-size: 0.85rem;">時間外実績の確認と分析</small>
+          </div>
+        </button>
+      </form>
     </div>
 
     <!-- 管理者メニュー -->

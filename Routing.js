@@ -168,6 +168,10 @@ function doPost(e) {
     case "generateUserQr":
       return handleGenerateUserQr(e, ss);
 
+    // 分析・レポート
+    case "analytics":
+      return handleAnalytics(e, ss);
+
     // それ以外はログイン画面へ
     default:
       return HtmlService.createTemplateFromFile('login').evaluate();
