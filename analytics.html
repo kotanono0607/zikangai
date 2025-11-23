@@ -421,15 +421,17 @@
 
       google.script.run
         .withSuccessHandler(function(data) {
+          console.log('個人データ取得成功:', data);
+
           // 統計計算
           var totalOt = 0;
           var totalComp = 0;
           var totalWork = 0;
 
           data.forEach(function(row) {
-            totalOt += row.時間外;
-            totalComp += row.振替時間;
-            totalWork += row.勤務時間;
+            totalOt += parseFloat(row.時間外) || 0;
+            totalComp += parseFloat(row.振替時間) || 0;
+            totalWork += parseFloat(row.勤務時間) || 0;
           });
 
           document.getElementById('myTotalOt').textContent = totalOt.toFixed(1) + 'h';
@@ -439,46 +441,74 @@
           // テーブル表示
           var tbody = document.getElementById('myDataTable');
           tbody.innerHTML = '';
-          data.forEach(function(row) {
+
+          if (data.length === 0) {
             var tr = document.createElement('tr');
-            tr.innerHTML = '<td>' + row.年月 + '</td>' +
-                          '<td class="text-end">' + row.時間外.toFixed(1) + 'h</td>' +
-                          '<td class="text-end">' + row.振替時間.toFixed(1) + 'h</td>' +
-                          '<td class="text-end"><strong>' + row.勤務時間.toFixed(1) + 'h</strong></td>';
+            tr.innerHTML = '<td colspan="4" class="text-center" style="padding: 2rem; color: #999;">データがありません</td>';
             tbody.appendChild(tr);
-          });
+          } else {
+            data.forEach(function(row) {
+              var tr = document.createElement('tr');
+              var 時間外 = parseFloat(row.時間外) || 0;
+              var 振替時間 = parseFloat(row.振替時間) || 0;
+              var 勤務時間 = parseFloat(row.勤務時間) || 0;
+
+              tr.innerHTML = '<td>' + row.年月 + '</td>' +
+                            '<td class="text-end">' + 時間外.toFixed(1) + 'h</td>' +
+                            '<td class="text-end">' + 振替時間.toFixed(1) + 'h</td>' +
+                            '<td class="text-end"><strong>' + 勤務時間.toFixed(1) + 'h</strong></td>';
+              tbody.appendChild(tr);
+            });
+          }
 
           // グラフ描画
           drawMyChart(data);
+        })
+        .withFailureHandler(function(error) {
+          console.error('データ取得エラー:', error);
+          alert('データの取得に失敗しました: ' + error.message);
         })
         .getMyMonthlyData(ログインID, currentFiscalYear);
     }
 
     // 個人グラフ描画
     function drawMyChart(data) {
-      var chartData = [['月', '時間外', '振替時間', '勤務時間']];
-      data.forEach(function(row) {
-        chartData.push([
-          row.month + '月',
-          row.時間外,
-          row.振替時間,
-          row.勤務時間
-        ]);
-      });
+      var chartContainer = document.getElementById('myChart');
 
-      var dataTable = google.visualization.arrayToDataTable(chartData);
+      // データが空の場合
+      if (!data || data.length === 0) {
+        chartContainer.innerHTML = '<div class="loading"><i class="bi bi-inbox"></i><p>データがありません</p></div>';
+        return;
+      }
 
-      var options = {
-        title: '月別時間外推移',
-        colors: ['#E67E22', '#3498DB', '#16A085'],
-        legend: { position: 'bottom' },
-        chartArea: { width: '85%', height: '70%' },
-        hAxis: { title: '月' },
-        vAxis: { title: '時間', minValue: 0 }
-      };
+      try {
+        var chartData = [['月', '時間外', '振替時間', '勤務時間']];
+        data.forEach(function(row) {
+          chartData.push([
+            row.month + '月',
+            parseFloat(row.時間外) || 0,
+            parseFloat(row.振替時間) || 0,
+            parseFloat(row.勤務時間) || 0
+          ]);
+        });
 
-      var chart = new google.visualization.ColumnChart(document.getElementById('myChart'));
-      chart.draw(dataTable, options);
+        var dataTable = google.visualization.arrayToDataTable(chartData);
+
+        var options = {
+          title: '月別時間外推移',
+          colors: ['#E67E22', '#3498DB', '#16A085'],
+          legend: { position: 'bottom' },
+          chartArea: { width: '85%', height: '70%' },
+          hAxis: { title: '月' },
+          vAxis: { title: '時間', minValue: 0 }
+        };
+
+        var chart = new google.visualization.ColumnChart(chartContainer);
+        chart.draw(dataTable, options);
+      } catch (error) {
+        console.error('グラフ描画エラー:', error);
+        chartContainer.innerHTML = '<div class="loading"><i class="bi bi-exclamation-triangle"></i><p>グラフの描画に失敗しました</p></div>';
+      }
     }
 
     // 部署別データ読み込み（管理者のみ）
@@ -513,24 +543,40 @@
 
     // 部署別グラフ描画
     function drawDeptChart(data) {
-      var chartData = [['所属１', '勤務時間合計']];
-      data.forEach(function(dept) {
-        chartData.push([dept.所属１, dept.勤務時間合計]);
-      });
+      var chartContainer = document.getElementById('deptChart');
 
-      var dataTable = google.visualization.arrayToDataTable(chartData);
+      // データが空の場合
+      if (!data || data.length === 0) {
+        chartContainer.innerHTML = '<div class="loading"><i class="bi bi-inbox"></i><p>データがありません</p></div>';
+        return;
+      }
 
-      var options = {
-        title: '所属１別勤務時間',
-        colors: ['#16A085'],
-        legend: { position: 'none' },
-        chartArea: { width: '85%', height: '70%' },
-        hAxis: { title: '所属１' },
-        vAxis: { title: '勤務時間合計（時間）', minValue: 0 }
-      };
+      try {
+        var chartData = [['所属１', '勤務時間合計']];
+        data.forEach(function(dept) {
+          chartData.push([
+            String(dept.所属１),
+            parseFloat(dept.勤務時間合計) || 0
+          ]);
+        });
 
-      var chart = new google.visualization.ColumnChart(document.getElementById('deptChart'));
-      chart.draw(dataTable, options);
+        var dataTable = google.visualization.arrayToDataTable(chartData);
+
+        var options = {
+          title: '所属１別勤務時間',
+          colors: ['#16A085'],
+          legend: { position: 'none' },
+          chartArea: { width: '85%', height: '70%' },
+          hAxis: { title: '所属１' },
+          vAxis: { title: '勤務時間合計（時間）', minValue: 0 }
+        };
+
+        var chart = new google.visualization.ColumnChart(chartContainer);
+        chart.draw(dataTable, options);
+      } catch (error) {
+        console.error('グラフ描画エラー:', error);
+        chartContainer.innerHTML = '<div class="loading"><i class="bi bi-exclamation-triangle"></i><p>グラフの描画に失敗しました</p></div>';
+      }
     }
 
     // ランキング読み込み
