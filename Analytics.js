@@ -71,28 +71,38 @@ function getMyMonthlyData(ログインID, 年度) {
   Logger.log("対象年度: " + startYear + "年度 (期間: " + startYear + "年4月〜" + endYear + "年3月)");
 
   for (var i = 0; i < data.length; i++) {
-    var 年月 = String(data[i][0]);
+    var 年月Raw = data[i][0];
     var userID = String(data[i][1]).trim();
     var 時間外 = parseFloat(data[i][2]) || 0;
     var 振替時間 = parseFloat(data[i][3]) || 0;
 
-    // ログインIDの照合（デバッグ用に最初の数件だけログ出力）
-    if (i < 10) {
-      Logger.log("行" + (i+2) + ": 年月=" + 年月 + ", userID=[" + userID + "], ログインID=[" + ログインID + "], 一致=" + (userID === String(ログインID).trim()));
-    }
-
-    // ユーザーIDが一致しない場合はスキップ
+    // ログインIDが一致しない場合はスキップ
     if (userID !== String(ログインID).trim()) continue;
 
-    // 年月から年と月を抽出
-    var match = 年月.match(/(\d{4})年(\d{1,2})月/);
-    if (!match) {
-      Logger.log("年月フォーマットエラー: " + 年月);
-      continue;
+    // 年月の処理：Date オブジェクトまたは文字列に対応
+    var year, month, 年月;
+
+    if (年月Raw instanceof Date) {
+      // Date オブジェクトの場合
+      year = 年月Raw.getFullYear();
+      month = 年月Raw.getMonth() + 1; // getMonth() は 0-11 なので +1
+      年月 = year + "年" + month + "月";
+    } else {
+      // 文字列の場合（従来の処理）
+      年月 = String(年月Raw);
+      var match = 年月.match(/(\d{4})年(\d{1,2})月/);
+      if (!match) {
+        Logger.log("年月フォーマットエラー: " + 年月);
+        continue;
+      }
+      year = parseInt(match[1]);
+      month = parseInt(match[2]);
     }
 
-    var year = parseInt(match[1]);
-    var month = parseInt(match[2]);
+    // デバッグ用ログ（最初の数件のみ）
+    if (i < 10) {
+      Logger.log("行" + (i+2) + ": 年月=" + 年月 + ", userID=[" + userID + "], ログインID=[" + ログインID + "], 一致=true");
+    }
 
     // このユーザーの全データを記録（デバッグ用）
     allUserData.push(年月);
